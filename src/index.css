@@ -1252,25 +1252,73 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-.pdf-canvas-viewport {
+.pdf-continuous-scroll-viewport {
   flex: 1;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   display: flex;
-  align-items: flex-start;
   justify-content: center;
-  padding: 24px 16px;
+  padding: 24px 16px 40px;
   background: #06070B;
 }
 
-.canvas-wrapper-relative {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+.pdf-pages-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.pdf-page-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 4px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+  background: #FFFFFF;
   overflow: hidden;
+  transition: width 0.15s ease-out;
+}
+
+.pdf-page-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .pdf-rendered-canvas {
   display: block;
-  background: #FFFFFF;
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-page-skeleton-overlay,
+.pdf-page-skeleton {
+  position: absolute;
+  inset: 0;
+  background: #11141E;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-dim);
+}
+
+.skeleton-badge {
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--neon-blue);
+  border: 1px solid var(--neon-blue-border);
+  padding: 4px 14px;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .pdf-state-box {
@@ -1278,10 +1326,20 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
   height: 100%;
+  min-height: 280px;
   color: var(--text-muted);
   font-size: 0.95rem;
+  text-align: center;
+}
+
+.error-actions-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .pdf-modal-footer {
