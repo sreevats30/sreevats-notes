@@ -820,6 +820,40 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
+.tag-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tag-pill-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tag-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+.tag-pill-btn.active {
+  background: rgba(0, 240, 255, 0.12);
+  color: var(--neon-blue);
+  border-color: var(--neon-blue);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.18);
+}
+
 /* ========================================================
    NOTES GRID & NOTE CARD
    ======================================================== */
@@ -974,6 +1008,31 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--neon-red);
   border: 1px solid rgba(255, 0, 85, 0.18);
 }
+
+.card-tag-purple {
+  background: rgba(168, 85, 247, 0.08);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.24);
+}
+
+.card-tag-green {
+  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.24);
+}
+
+.card-tag-amber {
+  background: rgba(245, 158, 11, 0.08);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.24);
+}
+
+.card-tag-orange {
+  background: rgba(249, 115, 22, 0.08);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.24);
+}
+
 
 .card-meta-row {
   display: flex;

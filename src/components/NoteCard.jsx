@@ -1,12 +1,24 @@
 import React from 'react';
 import { Eye, Download, FileText, Calendar, Hash, Layers } from 'lucide-react';
-import { FILES_BASE_URL } from '../config';
+import { FILES_BASE_URL, getNoteTags } from '../config';
 
 export function NoteCard({ note, onPreview }) {
+  const activeTags = React.useMemo(() => getNoteTags(note), [note]);
+
   const isExamAlert = 
     note.type === 'PYQ Solution' || 
     note.unit === 'PYQ' || 
-    note.tags?.some(t => /endsem|pyq|midsem/i.test(t));
+    activeTags.some(t => /last-minute|practice|endsem|pyq|midsem/i.test(t));
+
+  const getTagColorClass = (tag) => {
+    const t = tag.toLowerCase();
+    if (t.includes('practice')) return 'card-tag-orange';
+    if (t.includes('chem')) return 'card-tag-purple';
+    if (t.includes('common')) return 'card-tag-green';
+    if (t.includes('formula') || t.includes('credit')) return 'card-tag-amber';
+    if (t.includes('digital') || t.includes('slide')) return 'card-tag-purple';
+    return 'card-tag-blue';
+  };
 
   const downloadUrl = `${FILES_BASE_URL}${note.file}`;
 
@@ -33,19 +45,16 @@ export function NoteCard({ note, onPreview }) {
       </h3>
 
       {/* Tags row */}
-      {note.tags && note.tags.length > 0 && (
+      {activeTags.length > 0 && (
         <div className="card-tags-list">
-          {note.tags.map((tag, idx) => {
-            const isRedTag = /endsem|pyq|high-yield|important|derivation/i.test(tag);
-            return (
-              <span 
-                key={idx} 
-                className={`card-tag ${isRedTag ? 'card-tag-red' : 'card-tag-blue'}`}
-              >
-                #{tag}
-              </span>
-            );
-          })}
+          {activeTags.map((tag, idx) => (
+            <span 
+              key={idx} 
+              className={`card-tag ${getTagColorClass(tag)}`}
+            >
+              #{tag}
+            </span>
+          ))}
         </div>
       )}
 

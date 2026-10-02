@@ -20,3 +20,21 @@ export const SITE_CONFIG = {
   contactEmail: 'contact@notes-sreevats.pages.dev',
   githubUrl: 'https://github.com',
 };
+
+/**
+ * Extracts active tags from a note.
+ * Supports:
+ * - 1/0 toggle object: { "Endsem": 1, "Midsem": 0, "Derivations": 1 }
+ * - array of strings: ["Endsem", "Derivations"]
+ */
+export function getNoteTags(note) {
+  if (!note || !note.tags) return [];
+  if (Array.isArray(note.tags)) return note.tags;
+  if (typeof note.tags === 'object') {
+    return Object.entries(note.tags)
+      .filter(([_, val]) => val === 1 || val === '1' || val === true)
+      .map(([tag]) => tag);
+  }
+  return [];
+}
+

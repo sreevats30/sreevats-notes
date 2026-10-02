@@ -1,5 +1,6 @@
 import React from 'react';
-import { Filter, X, Sparkles, BookOpen, Layers, Check, SlidersHorizontal } from 'lucide-react';
+import { Filter, X, Sparkles, BookOpen, Layers, Check, SlidersHorizontal, Tag } from 'lucide-react';
+import masterTags from '../data/tags.json';
 
 export function SubjectFilter({
   notes,
@@ -13,6 +14,8 @@ export function SubjectFilter({
   setSelectedBranch,
   selectedSemester,
   setSelectedSemester,
+  selectedTag,
+  setSelectedTag,
   sortBy,
   setSortBy,
   onResetFilters
@@ -58,7 +61,7 @@ export function SubjectFilter({
   }, [notes]);
 
   const hasActiveFilters = Boolean(
-    selectedSubject || selectedUnit || selectedType || selectedBranch || selectedSemester
+    selectedSubject || selectedUnit || selectedType || selectedBranch || selectedSemester || selectedTag
   );
 
   return (
@@ -216,6 +219,34 @@ export function SubjectFilter({
           ))}
         </div>
       </div>
+
+      {/* Tag filter pills (Phy-cycle, Chem-cycle, Last-minute, etc.) */}
+      {masterTags && masterTags.length > 0 && (
+        <div className="tag-filter-row">
+          <span className="unit-scroll-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Tag size={13} className="text-neon-cyan" />
+            <span>Tag:</span>
+          </span>
+          <button
+            className={`tag-pill-btn ${!selectedTag ? 'active' : ''}`}
+            onClick={() => setSelectedTag('')}
+          >
+            All Tags
+          </button>
+          {masterTags.map(tag => {
+            const isSelected = selectedTag === tag;
+            return (
+              <button
+                key={tag}
+                className={`tag-pill-btn ${isSelected ? 'active' : ''}`}
+                onClick={() => setSelectedTag(isSelected ? '' : tag)}
+              >
+                #{tag}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

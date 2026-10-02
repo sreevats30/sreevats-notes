@@ -9,6 +9,7 @@ import { PdfViewerModal } from './components/PdfViewerModal';
 import { CgpaCalculator } from './components/CgpaCalculator';
 import { Footer } from './components/Footer';
 import { BookOpen, Search, Sparkles, FilterX, HelpCircle, Layers, ArrowRight } from 'lucide-react';
+import { getNoteTags } from './config';
 
 export function App() {
   const [notes] = useState(rawNotesData);
@@ -20,6 +21,7 @@ export function App() {
   const [selectedType, setSelectedType] = useState('');
   const [selectedBranch, setSelectedBranch] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('');
+  const [selectedTag, setSelectedTag] = useState('');
   const [sortBy, setSortBy] = useState('recent');
 
   // Modals
@@ -44,6 +46,7 @@ export function App() {
     setSelectedType('');
     setSelectedBranch('');
     setSelectedSemester('');
+    setSelectedTag('');
     setSortBy('recent');
   };
 
@@ -55,6 +58,10 @@ export function App() {
       if (selectedType && n.type !== selectedType) return false;
       if (selectedBranch && n.branch !== selectedBranch) return false;
       if (selectedSemester && n.semester !== Number(selectedSemester)) return false;
+      if (selectedTag) {
+        const noteTags = getNoteTags(n);
+        if (!noteTags.includes(selectedTag)) return false;
+      }
       return true;
     });
 
@@ -74,7 +81,7 @@ export function App() {
       }
       return 0;
     });
-  }, [notes, selectedSubject, selectedUnit, selectedType, selectedBranch, selectedSemester, sortBy]);
+  }, [notes, selectedSubject, selectedUnit, selectedType, selectedBranch, selectedSemester, selectedTag, sortBy]);
 
   // Stats calculation
   const totalPages = useMemo(() => {
@@ -124,6 +131,8 @@ export function App() {
                 setSelectedBranch={setSelectedBranch}
                 selectedSemester={selectedSemester}
                 setSelectedSemester={setSelectedSemester}
+                selectedTag={selectedTag}
+                setSelectedTag={setSelectedTag}
                 sortBy={sortBy}
                 setSortBy={setSortBy}
                 onResetFilters={resetAllFilters}
@@ -137,6 +146,9 @@ export function App() {
                   <span className="showing-text">of {notes.length} notes</span>
                   {selectedSubject && (
                     <span className="active-subj-tag">in {selectedSubject}</span>
+                  )}
+                  {selectedTag && (
+                    <span className="active-subj-tag">#{selectedTag}</span>
                   )}
                 </div>
 

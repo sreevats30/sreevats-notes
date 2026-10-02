@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, FileText, ArrowRight, Eye, Download, Layers } from 'lucide-react';
-import { FILES_BASE_URL } from '../config';
+import { FILES_BASE_URL, getNoteTags } from '../config';
 
 export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
   const [query, setQuery] = useState('');
@@ -35,7 +35,8 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
       const matchUnit = n.unit?.toLowerCase().includes(q);
       const matchCode = n.subjectCode?.toLowerCase().includes(q);
       const matchType = n.type?.toLowerCase().includes(q);
-      const matchTags = n.tags?.some(t => t.toLowerCase().includes(q));
+      const tags = getNoteTags(n);
+      const matchTags = tags.some(t => t.toLowerCase().includes(q));
       return matchTitle || matchSubj || matchUnit || matchCode || matchType || matchTags;
     }).slice(0, 8); // Top 8 matches
   }, [query, notes]);

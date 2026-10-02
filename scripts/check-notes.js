@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 const notesJsonPath = path.join(rootDir, 'src', 'data', 'notes.json');
+const tagsJsonPath = path.join(rootDir, 'src', 'data', 'tags.json');
 const publicDir = path.join(rootDir, 'public');
 const publicNotesDir = path.join(publicDir, 'notes');
 
@@ -114,7 +115,17 @@ for (const [relPath] of discoveredPdfRelativeMap.entries()) {
   }
 }
 
-// 6. Print summary
+// 6. Verify tags.json if present
+let masterTags = [];
+if (fs.existsSync(tagsJsonPath)) {
+  try {
+    masterTags = JSON.parse(fs.readFileSync(tagsJsonPath, 'utf8'));
+  } catch (err) {
+    console.warn(`⚠️  Warning: Failed to parse tags.json: ${err.message}`);
+  }
+}
+
+// 7. Print summary
 const totalNotesCount = notes.length;
 const totalPdfsCount = allPdfsInNotesDir.length;
 const totalSizeMB = (totalPdfSizeBytes / (1024 * 1024)).toFixed(2);
@@ -124,6 +135,9 @@ console.log(`Notes in notes.json : ${totalNotesCount}`);
 console.log(`PDFs in public/notes: ${totalPdfsCount}`);
 console.log(`Total PDF storage   : ${totalSizeMB} MB`);
 console.log(`Total public files  : ${totalPublicFilesCount} / 20,000 max`);
+if (masterTags.length > 0) {
+  console.log(`Active tags (${masterTags.length})    : ${masterTags.join(', ')}`);
+}
 console.log('---------------\n');
 
 if (hasFailed) {
