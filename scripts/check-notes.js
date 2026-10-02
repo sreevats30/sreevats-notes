@@ -21,66 +21,30 @@ let hasFailed = false;
 let notes = [];
 let subjectFiles = [];
 
-// 1. Verify and read notes metadata directly from public/notes/<subject>/*.json
-let publicSubjectFiles = [];
-if (fs.existsSync(publicNotesDir)) {
-  const entries = fs.readdirSync(publicNotesDir, { withFileTypes: true });
-  for (const entry of entries) {
-    if (entry.isDirectory()) {
-      const folderName = entry.name;
-      const folderPath = path.join(publicNotesDir, folderName);
-      const jsonFiles = fs.readdirSync(folderPath).filter(f => f.endsWith('.json'));
-      for (const jsonFile of jsonFiles) {
-        const fullJsonPath = path.join(folderPath, jsonFile);
-        try {
-          const content = JSON.parse(fs.readFileSync(fullJsonPath, 'utf8'));
-          const items = Array.isArray(content) ? content : [content];
-          for (const item of items) {
-            let filePath = item.file || '';
-            if (folderName && !filePath.includes('/') && !filePath.includes('\\')) {
-              filePath = `${folderName}/${filePath}`;
-            }
-            notes.push({ ...item, file: filePath });
-          }
-          publicSubjectFiles.push(`${folderName}/${jsonFile}`);
-        } catch (err) {
-          console.error(`❌ Error parsing ${folderName}/${jsonFile}: ${err.message}`);
-          hasFailed = true;
-        }
-      }
-    }
-  }
+// 1. Verify and read notes metadata from src/data/subjects/*.json
+if (!fs.existsSync(subjectsDir)) {
+  console.error(`❌ Error: Directory not found at ${subjectsDir}`);
+  process.exit(1);
 }
 
-// Fallback to src/data/subjects/ if none in public/notes/
-if (notes.length === 0 && fs.existsSync(subjectsDir)) {
-  subjectFiles = fs.readdirSync(subjectsDir).filter(f => f.endsWith('.json'));
-  for (const file of subjectFiles) {
-    const fullSubjectPath = path.join(subjectsDir, file);
-    try {
-      const content = JSON.parse(fs.readFileSync(fullSubjectPath, 'utf8'));
-      if (Array.isArray(content)) {
-        notes.push(...content);
-      } else {
-        notes.push(content);
-      }
-    } catch (err) {
-      console.error(`❌ Error parsing subject file "${file}": ${err.message}`);
-      process.exit(1);
-    }
-  }
-} else if (notes.length === 0 && fs.existsSync(notesJsonPath)) {
+subjectFiles = fs.readdirSync(subjectsDir).filter(f => f.endsWith('.json'));
+for (const file of subjectFiles) {
+  const fullSubjectPath = path.join(subjectsDir, file);
   try {
-    const content = fs.readFileSync(notesJsonPath, 'utf8');
-    notes = JSON.parse(content);
+    const content = JSON.parse(fs.readFileSync(fullSubjectPath, 'utf8'));
+    if (Array.isArray(content)) {
+      notes.push(...content);
+    } else {
+      notes.push(content);
+    }
   } catch (err) {
-    console.error(`❌ Error: Failed to parse notes.json: ${err.message}`);
+    console.error(`❌ Error parsing subject file "${file}": ${err.message}`);
     process.exit(1);
   }
 }
 
 if (!Array.isArray(notes) || notes.length === 0) {
-  console.error('❌ Error: No note entries found in your subject JSON files.');
+  console.error(`❌ Error: No subject JSON files found in ${subjectsDir}`);
   process.exit(1);
 }
 
@@ -177,11 +141,7 @@ const totalPdfsCount = allPdfsInNotesDir.length;
 const totalSizeMB = (totalPdfSizeBytes / (1024 * 1024)).toFixed(2);
 
 console.log('--- Summary ---');
-if (publicSubjectFiles.length > 0) {
-  console.log(`Subject JSONs (${publicSubjectFiles.length}) : ${publicSubjectFiles.join(', ')}`);
-} else if (subjectFiles.length > 0) {
-  console.log(`Subject files (${subjectFiles.length}) : ${subjectFiles.join(', ')}`);
-}
+console.log(`Subject files (${subjectFiles.length}) : ${subjectFiles.join(', ')}`);
 console.log(`Total notes listed  : ${totalNotesCount}`);
 console.log(`PDFs in public/notes: ${totalPdfsCount}`);
 console.log(`Total PDF storage   : ${totalSizeMB} MB`);
