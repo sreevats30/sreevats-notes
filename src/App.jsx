@@ -7,6 +7,7 @@ import { NoteCard } from './components/NoteCard';
 import { SearchModal } from './components/SearchModal';
 import { PdfViewerModal } from './components/PdfViewerModal';
 import { CgpaCalculator } from './components/CgpaCalculator';
+import { ExamPrep } from './components/ExamPrep';
 import { Footer } from './components/Footer';
 import { BookOpen, Search, Sparkles, FilterX, HelpCircle, Layers, ArrowRight } from 'lucide-react';
 import { getNoteTags } from './config';
@@ -194,6 +195,11 @@ export function App() {
               )}
             </section>
           </>
+        ) : activeTab === 'examprep' ? (
+          /* Exam Prep Vault Tab */
+          <div className="tab-pane-fade">
+            <ExamPrep onPreview={(paper) => setPreviewNote(paper)} />
+          </div>
         ) : (
           /* CGPA Calculator Tab */
           <div className="tab-pane-fade">

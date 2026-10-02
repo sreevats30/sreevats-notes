@@ -1,17 +1,11 @@
 import React from 'react';
-import { Sparkles, FileText, CheckCircle2, Zap, ArrowDown, Download, Eye } from 'lucide-react';
+import { FileText, CheckCircle2, Zap, ArrowDown, Download, Eye } from 'lucide-react';
 import { SITE_CONFIG } from '../config';
 
 export function Hero({ totalNotes, totalPages, totalSubjects, onExploreClick }) {
   return (
     <section className="hero-section">
       <div className="container hero-container">
-        {/* Top pill badge */}
-        <div className="hero-pill-badge">
-          <span className="pill-dot"></span>
-          <Sparkles size={14} className="text-neon-cyan" />
-          <span>Curated for College Students • Fast & Mobile Optimized</span>
-        </div>
 
         {/* Main Heading */}
         <h1 className="hero-title">

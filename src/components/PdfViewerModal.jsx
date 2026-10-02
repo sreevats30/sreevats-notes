@@ -111,7 +111,9 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
   const viewportRef = useRef(null);
   const pageRefs = useRef(new Map());
 
-  const pdfUrl = note ? `${FILES_BASE_URL}${note.file}` : '';
+  const pdfUrl = note 
+    ? (note.file.startsWith('/') || note.file.startsWith('http') ? note.file : `${FILES_BASE_URL}${note.file}`) 
+    : '';
 
   // Measure viewport width
   const updateContainerWidth = useCallback(() => {

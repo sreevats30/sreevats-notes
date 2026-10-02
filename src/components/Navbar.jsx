@@ -38,6 +38,14 @@ export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
           </button>
 
           <button 
+            className={`nav-link ${activeTab === 'examprep' ? 'active' : ''}`}
+            onClick={() => setActiveTab('examprep')}
+          >
+            <GraduationCap size={16} />
+            <span>Exam Prep</span>
+          </button>
+
+          <button 
             className={`nav-link ${activeTab === 'calculator' ? 'active' : ''}`}
             onClick={() => setActiveTab('calculator')}
           >
@@ -77,6 +85,14 @@ export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
           >
             <BookOpen size={18} />
             <span>Notes Library</span>
+          </button>
+
+          <button 
+            className={`mobile-nav-link ${activeTab === 'examprep' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('examprep'); setMobileMenuOpen(false); }}
+          >
+            <GraduationCap size={18} />
+            <span>Exam Prep</span>
           </button>
 
           <button 
