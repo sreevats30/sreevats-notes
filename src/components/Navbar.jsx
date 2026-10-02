@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Search, Calculator, Menu, X, Sparkles, GraduationCap } from 'lucide-react';
+import { BookOpen, Search, Calculator, Menu, X, Sparkles, GraduationCap, Heart } from 'lucide-react';
 import { SITE_CONFIG } from '../config';
 
 export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
@@ -52,6 +52,14 @@ export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
             <Calculator size={16} />
             <span>CGPA Calculator</span>
           </button>
+
+          <button 
+            className={`nav-link ${activeTab === 'credits' ? 'active' : ''}`}
+            onClick={() => setActiveTab('credits')}
+          >
+            <Heart size={16} />
+            <span>Credits</span>
+          </button>
         </nav>
 
         {/* Search trigger & Mobile toggle */}
@@ -101,6 +109,14 @@ export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
           >
             <Calculator size={18} />
             <span>CGPA / SGPA Calculator</span>
+          </button>
+
+          <button 
+            className={`mobile-nav-link ${activeTab === 'credits' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('credits'); setMobileMenuOpen(false); }}
+          >
+            <Heart size={18} />
+            <span>Credits</span>
           </button>
 
           <button 

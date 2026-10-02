@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import rawNotesData from './data/notes';
+import { getExamPapers } from './data/examPapers';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { SubjectFilter } from './components/SubjectFilter';
@@ -8,6 +9,7 @@ import { SearchModal } from './components/SearchModal';
 import { PdfViewerModal } from './components/PdfViewerModal';
 import { CgpaCalculator } from './components/CgpaCalculator';
 import { ExamPrep } from './components/ExamPrep';
+import { Credits } from './components/Credits';
 import { Footer } from './components/Footer';
 import { BookOpen, Search, Sparkles, FilterX, HelpCircle, Layers, ArrowRight } from 'lucide-react';
 import { getNoteTags } from './config';
@@ -91,6 +93,12 @@ export function App() {
 
   const totalSubjects = useMemo(() => {
     return new Set(notes.map(n => n.subject)).size;
+  }, [notes]);
+
+  // Combined searchable resources (Notes + Exam Prep Papers)
+  const allSearchableResources = useMemo(() => {
+    const examPapers = getExamPapers();
+    return [...notes, ...examPapers];
   }, [notes]);
 
   return (
@@ -200,10 +208,15 @@ export function App() {
           <div className="tab-pane-fade">
             <ExamPrep onPreview={(paper) => setPreviewNote(paper)} />
           </div>
-        ) : (
+        ) : activeTab === 'calculator' ? (
           /* CGPA Calculator Tab */
           <div className="tab-pane-fade">
             <CgpaCalculator />
+          </div>
+        ) : (
+          /* Credits & Contributors Tab */
+          <div className="tab-pane-fade">
+            <Credits />
           </div>
         )}
       </main>
@@ -212,7 +225,7 @@ export function App() {
       <SearchModal
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
-        notes={notes}
+        notes={allSearchableResources}
         onSelectNote={(note) => setPreviewNote(note)}
       />
 

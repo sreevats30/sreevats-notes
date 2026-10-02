@@ -3,7 +3,7 @@ import { FileText, Search, Download, Eye, Sparkles, FolderOpen, AlertCircle, Hel
 import { getExamPapers } from '../data/examPapers';
 
 export function ExamPrep({ onPreview }) {
-  const [papers] = useState(() => getExamPapers());
+  const papers = useMemo(() => getExamPapers(), []);
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPapers = useMemo(() => {

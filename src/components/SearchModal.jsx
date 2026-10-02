@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, FileText, ArrowRight, Eye, Download, Layers } from 'lucide-react';
+import { Search, X, FileText, ArrowRight, Eye, Download, Layers, GraduationCap } from 'lucide-react';
 import { FILES_BASE_URL, getNoteTags } from '../config';
 
 export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
@@ -25,20 +25,21 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Filter notes
-  const filteredNotes = React.useMemo(() => {
+  // Filter all resources (notes + exam papers)
+  const filteredResources = React.useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase().trim();
     return notes.filter(n => {
       const matchTitle = n.title?.toLowerCase().includes(q);
+      const matchFileName = n.fileName?.toLowerCase().includes(q);
       const matchSubj = n.subject?.toLowerCase().includes(q);
       const matchUnit = n.unit?.toLowerCase().includes(q);
       const matchCode = n.subjectCode?.toLowerCase().includes(q);
       const matchType = n.type?.toLowerCase().includes(q);
       const tags = getNoteTags(n);
       const matchTags = tags.some(t => t.toLowerCase().includes(q));
-      return matchTitle || matchSubj || matchUnit || matchCode || matchType || matchTags;
-    }).slice(0, 8); // Top 8 matches
+      return matchTitle || matchFileName || matchSubj || matchUnit || matchCode || matchType || matchTags;
+    }).slice(0, 10); // Top 10 matches
   }, [query, notes]);
 
   if (!isOpen) return null;
@@ -58,7 +59,7 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
             ref={inputRef}
             type="text"
             className="search-modal-input"
-            placeholder="Type a subject, unit, PYQ, or topic..."
+            placeholder="Search all notes, question papers, PYQs, units..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -76,9 +77,9 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
           {query.trim() === '' ? (
             <div className="search-empty-prompt">
               <span className="prompt-title">Quick Search Command Palette</span>
-              <p className="prompt-sub">Try searching: "Physics", "PYQ", "Unit 1", "PHY101", "Formula"</p>
+              <p className="prompt-sub">Search across all notes, question papers, formula sheets, and solved PYQs.</p>
               <div className="quick-suggestions-row">
-                {['Physics', 'Formula Sheet', 'PYQ', 'Chemistry', 'Data Structures'].map(term => (
+                {['Physics', 'Chemistry', 'PYQ', 'Exam', 'Mathematics', 'Formula Sheet'].map(term => (
                   <button 
                     key={term} 
                     className="suggestion-chip"
@@ -89,19 +90,21 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
                 ))}
               </div>
             </div>
-          ) : filteredNotes.length === 0 ? (
+          ) : filteredResources.length === 0 ? (
             <div className="search-no-results">
               <FileText size={32} className="text-muted" />
-              <p>No matching notes found for "{query}"</p>
-              <span>Try checking spelling or browse subjects directly.</span>
+              <p>No matching resources found for "{query}"</p>
+              <span>Try checking spelling or search by subject name.</span>
             </div>
           ) : (
             <div className="search-results-list">
               <div className="results-count-bar">
-                Found {filteredNotes.length} matching note{filteredNotes.length > 1 ? 's' : ''}
+                Found {filteredResources.length} matching resource{filteredResources.length > 1 ? 's' : ''}
               </div>
-              {filteredNotes.map(n => {
+              {filteredResources.map(n => {
+                const isExam = n.isExamPaper || n.subject === 'Exam Prep';
                 const isPyq = n.type === 'PYQ Solution' || n.unit === 'PYQ';
+
                 return (
                   <div 
                     key={n.id} 
@@ -112,17 +115,33 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
                       <div className="result-tags-line">
                         <span className="result-subj-badge">{n.subject}</span>
                         {n.subjectCode && <span className="result-code-badge mono">{n.subjectCode}</span>}
-                        <span className={`result-unit-badge ${isPyq ? 'badge-red' : 'badge-blue'} mono`}>
-                          {n.unit}
+                        <span className={`result-unit-badge ${isExam ? 'badge-exam' : isPyq ? 'badge-red' : 'badge-blue'} mono`}>
+                          {n.unit || (isExam ? 'Question Paper' : 'Note')}
                         </span>
                       </div>
+
                       <h4 className="result-title">{n.title}</h4>
+
                       <div className="result-meta-line mono">
-                        <span>{n.pages} pages</span>
-                        <span>•</span>
-                        <span>{n.sizeMB} MB</span>
-                        <span>•</span>
-                        <span>{n.type}</span>
+                        {n.pages && (
+                          <>
+                            <span>{n.pages} pages</span>
+                            <span>•</span>
+                          </>
+                        )}
+                        {n.sizeMB && (
+                          <>
+                            <span>{n.sizeMB} MB</span>
+                            <span>•</span>
+                          </>
+                        )}
+                        <span>{n.type || 'PDF Document'}</span>
+                        {n.fileName && !n.pages && (
+                          <>
+                            <span>•</span>
+                            <span className="text-dim">{n.fileName}</span>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -148,10 +167,12 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
             <kbd>ESC</kbd> to close
           </div>
           <div className="shortcut-hint">
-            <kbd>Click</kbd> to preview note
+            <kbd>Click</kbd> to preview in-browser
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default SearchModal;

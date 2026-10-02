@@ -11,19 +11,24 @@ export function getExamPapers() {
   const entries = Object.keys(examModules);
   
   return entries.map((filePath, index) => {
+    const mod = examModules[filePath];
+    const resolvedUrl = (mod && typeof mod === 'object' && mod.default) 
+      ? mod.default 
+      : (typeof mod === 'string' ? mod : filePath.replace(/^\/public/, ''));
+
     const fileNameWithExt = filePath.split('/').pop() || `Exam Paper ${index + 1}`;
     const fileNameWithoutExt = fileNameWithExt.replace(/\.[^/.]+$/, "");
     const displayTitle = fileNameWithoutExt.replace(/_/g, ' ');
-    const relativeUrl = filePath.replace('/public', '');
 
     return {
       id: `exam-${index + 1}-${fileNameWithoutExt}`,
       title: displayTitle,
       fileName: fileNameWithExt,
-      file: relativeUrl, // e.g. /exam/Filename.pdf
+      file: resolvedUrl,
       subject: 'Exam Prep',
       unit: 'Question Paper',
       type: 'Exam Paper',
+      isExamPaper: true,
     };
   });
 }
