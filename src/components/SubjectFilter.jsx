@@ -55,13 +55,8 @@ export function SubjectFilter({
     return branches;
   }, [notes]);
 
-  const availableSemesters = React.useMemo(() => {
-    const sems = Array.from(new Set(notes.map(n => n.semester).filter(Boolean)));
-    return sems.sort((a, b) => a - b);
-  }, [notes]);
-
   const hasActiveFilters = Boolean(
-    selectedSubject || selectedUnit || selectedType || selectedBranch || selectedSemester || selectedTag
+    selectedSubject || selectedUnit || selectedType || selectedBranch || selectedTag
   );
 
   return (
@@ -99,50 +94,27 @@ export function SubjectFilter({
         </div>
       </div>
 
-      {/* Optional Branch & Semester Pills (only shown if present in notes) */}
-      {(availableBranches.length > 0 || availableSemesters.length > 0) && (
+      {/* Optional Branch Pills (only shown if present in notes) */}
+      {availableBranches.length > 0 && (
         <div className="optional-filters-row">
-          {availableBranches.length > 0 && (
-            <div className="sub-filter-group">
-              <span className="sub-filter-label">Branch:</span>
-              <button 
-                className={`pill-btn ${!selectedBranch ? 'active' : ''}`}
-                onClick={() => setSelectedBranch('')}
+          <div className="sub-filter-group">
+            <span className="sub-filter-label">Branch:</span>
+            <button 
+              className={`pill-btn ${!selectedBranch ? 'active' : ''}`}
+              onClick={() => setSelectedBranch('')}
+            >
+              All
+            </button>
+            {availableBranches.map(b => (
+              <button
+                key={b}
+                className={`pill-btn ${selectedBranch === b ? 'active' : ''}`}
+                onClick={() => setSelectedBranch(selectedBranch === b ? '' : b)}
               >
-                All
+                {b}
               </button>
-              {availableBranches.map(b => (
-                <button
-                  key={b}
-                  className={`pill-btn ${selectedBranch === b ? 'active' : ''}`}
-                  onClick={() => setSelectedBranch(selectedBranch === b ? '' : b)}
-                >
-                  {b}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {availableSemesters.length > 0 && (
-            <div className="sub-filter-group">
-              <span className="sub-filter-label">Semester:</span>
-              <button 
-                className={`pill-btn ${!selectedSemester ? 'active' : ''}`}
-                onClick={() => setSelectedSemester('')}
-              >
-                All
-              </button>
-              {availableSemesters.map(sem => (
-                <button
-                  key={sem}
-                  className={`pill-btn ${selectedSemester === sem ? 'active' : ''}`}
-                  onClick={() => setSelectedSemester(selectedSemester === sem ? '' : sem)}
-                >
-                  Sem {sem}
-                </button>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       )}
 

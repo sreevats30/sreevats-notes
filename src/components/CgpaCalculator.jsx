@@ -29,11 +29,11 @@ const DEFAULT_COURSES = [
   { id: 3, name: 'Subject 3', credits: 4, grade: 'A' },
   { id: 4, name: 'Subject 4', credits: 4, grade: 'B' },
   { id: 5, name: 'Subject 5', credits: 4, grade: 'B' },
-  { id: 6, name: 'Subject 6 (Lab)', credits: 2, grade: 'S' },
+  { id: 6, name: 'Subject 6', credits: 2, grade: 'S' },
 ];
 
 export function CgpaCalculator() {
-  const [calcMode, setCalcMode] = useState('cgpa'); // 'cgpa' | 'sgpa' | 'guide'
+  const [calcMode, setCalcMode] = useState('sgpa'); // 'sgpa' | 'cgpa' | 'guide'
 
   // ==========================================
   // 1. SGPA (Single Semester) Calculator State
@@ -119,8 +119,6 @@ export function CgpaCalculator() {
     };
   }, [semesters]);
 
-  const degreeProgressPercent = Math.min(100, Math.round((completedCredits / 160) * 100));
-
   return (
     <div className="calculator-section container">
       {/* Top Header */}
@@ -134,14 +132,19 @@ export function CgpaCalculator() {
           <span className="gradient-text-blue">CGPA & SGPA</span>
           <span> Calculator</span>
         </h2>
-        <p className="calc-subtitle">
-          Designed specifically for university grading (160-credit degree structure). No confusing total credit calculations — enter your semester SGPA or course grades and let the calculator compute your score.
-        </p>
       </div>
 
       {/* Mode Switcher Tabs */}
       <div className="calc-tabs-row">
-        <button 
+        <button
+          className={`calc-mode-btn ${calcMode === 'sgpa' ? 'active-mode' : ''}`}
+          onClick={() => setCalcMode('sgpa')}
+        >
+          <Award size={16} />
+          <span>Single Semester - SGPA Calculator</span>
+        </button>
+
+        <button
           className={`calc-mode-btn ${calcMode === 'cgpa' ? 'active-mode' : ''}`}
           onClick={() => setCalcMode('cgpa')}
         >
@@ -149,15 +152,7 @@ export function CgpaCalculator() {
           <span>Semester-wise CGPA Calculator</span>
         </button>
 
-        <button 
-          className={`calc-mode-btn ${calcMode === 'sgpa' ? 'active-mode' : ''}`}
-          onClick={() => setCalcMode('sgpa')}
-        >
-          <Award size={16} />
-          <span>Single Semester SGPA Calculator</span>
-        </button>
-
-        <button 
+        <button
           className={`calc-mode-btn ${calcMode === 'guide' ? 'active-mode' : ''}`}
           onClick={() => setCalcMode('guide')}
         >
@@ -166,153 +161,7 @@ export function CgpaCalculator() {
         </button>
       </div>
 
-      {/* TAB 1: CGPA Calculator (Semester-by-Semester like PESU-pedia) */}
-      {calcMode === 'cgpa' && (
-        <div className="calculator-grid-layout">
-          {/* Left Column: Semester Table */}
-          <div className="calc-left-col glass-panel">
-            <div className="calc-panel-header">
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Semester Performance Breakdown</h3>
-                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                  Enter your SGPA for the semesters you've finished. Leave upcoming semesters blank.
-                </p>
-              </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button className="reset-calc-btn" onClick={clearAllSemesters} title="Clear all SGPA values">
-                  <span>Clear</span>
-                </button>
-                <button className="reset-calc-btn" onClick={resetSemesters} title="Reset to sample values">
-                  <RotateCcw size={13} />
-                  <span>Sample</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Semester Table */}
-            <div className="semesters-table-container">
-              <div className="semesters-table-head mono">
-                <span>Semester</span>
-                <span>SGPA (0 - 10)</span>
-                <span>Credits</span>
-                <span>Status</span>
-              </div>
-
-              <div className="semesters-table-body">
-                {semesters.map((s, idx) => {
-                  const isFilled = parseFloat(s.sgpa) > 0;
-                  return (
-                    <div key={s.sem} className={`semester-input-row ${isFilled ? 'row-active' : ''}`}>
-                      <div className="sem-label mono">
-                        <span className="sem-number-pill">Sem {s.sem}</span>
-                      </div>
-
-                      <div className="sem-sgpa-wrapper">
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="10"
-                          placeholder="e.g. 8.75"
-                          className="sem-sgpa-input mono"
-                          value={s.sgpa}
-                          onChange={(e) => updateSemester(idx, 'sgpa', e.target.value)}
-                        />
-                      </div>
-
-                      <div className="sem-credits-wrapper">
-                        <select
-                          className="sem-credits-select mono"
-                          value={s.credits}
-                          onChange={(e) => updateSemester(idx, 'credits', Number(e.target.value))}
-                        >
-                          {[16, 18, 20, 21, 22, 23, 24, 25, 26, 28].map(cr => (
-                            <option key={cr} value={cr}>{cr} Cr</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="sem-status-cell mono">
-                        {isFilled ? (
-                          <span className="status-badge-done">
-                            <Check size={12} />
-                            <span>{(parseFloat(s.sgpa) * s.credits).toFixed(0)} pts</span>
-                          </span>
-                        ) : (
-                          <span className="status-badge-pending">—</span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: CGPA Score Display */}
-          <div className="calc-right-col">
-            <div className="score-summary-card glass-panel">
-              <span className="score-label-sub">Cumulative CGPA</span>
-              <div className="huge-score-display mono gradient-text-dual">
-                {computedCgpa}
-                <span className="score-denominator"> / 10.0</span>
-              </div>
-
-              {/* Progress Bar towards 160 Credits */}
-              <div className="degree-progress-box" style={{ margin: '16px 0 20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '6px' }} className="mono">
-                  <span style={{ color: 'var(--text-dim)' }}>Degree Progress:</span>
-                  <span className="text-neon-cyan">{completedCredits} / 160 Credits ({degreeProgressPercent}%)</span>
-                </div>
-                <div style={{ height: '7px', background: 'rgba(255,255,255,0.08)', borderRadius: '10px', overflow: 'hidden' }}>
-                  <div 
-                    style={{ 
-                      width: `${degreeProgressPercent}%`, 
-                      height: '100%', 
-                      background: 'linear-gradient(90deg, var(--neon-blue), var(--neon-red))',
-                      transition: 'width 0.4s ease'
-                    }} 
-                  />
-                </div>
-              </div>
-
-              <div className="score-breakdown-row mono" style={{ marginBottom: 0 }}>
-                <div className="breakdown-stat">
-                  <span className="stat-name">Finished Sems:</span>
-                  <span className="stat-val text-neon-blue">{completedCount} of 8</span>
-                </div>
-                <div className="breakdown-stat">
-                  <span className="stat-name">Credits Earned:</span>
-                  <span className="stat-val text-neon-cyan">{completedCredits}</span>
-                </div>
-                <div className="breakdown-stat">
-                  <span className="stat-name">Total Points:</span>
-                  <span className="stat-val text-neon-red">{completedPoints.toFixed(0)}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Helper / Info Card */}
-            <div className="glass-panel" style={{ padding: '18px 20px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--neon-cyan)', fontWeight: 700, marginBottom: '8px' }}>
-                <Sparkles size={15} />
-                <span>How CGPA is Calculated</span>
-              </div>
-              <p style={{ lineHeight: 1.5, margin: 0 }}>
-                CGPA is the weighted average of your semester SGPAs weighted by the credits of each semester:
-              </p>
-              <div className="mono" style={{ background: 'rgba(0,0,0,0.4)', padding: '8px 12px', borderRadius: '6px', margin: '10px 0', fontSize: '0.78rem', color: 'var(--neon-blue)' }}>
-                CGPA = Σ(SGPA × Sem Credits) / Σ(Total Credits)
-              </div>
-              <p style={{ fontSize: '0.78rem', margin: 0, color: 'var(--text-dim)' }}>
-                Standard B.Tech degree requires <strong>160 credits</strong> across 8 semesters.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: SGPA Calculator (Single Semester by Course) */}
+      {/* TAB 1: SGPA Calculator (Single Semester by Course) */}
       {calcMode === 'sgpa' && (
         <div className="calculator-grid-layout">
           {/* Left Column: Course Rows */}
@@ -430,6 +279,119 @@ export function CgpaCalculator() {
         </div>
       )}
 
+      {/* TAB 2: CGPA Calculator (Semester-by-Semester like PESU-pedia) */}
+      {calcMode === 'cgpa' && (
+        <div className="calculator-grid-layout">
+          {/* Left Column: Semester Table */}
+          <div className="calc-left-col glass-panel">
+            <div className="calc-panel-header">
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Semester Performance Breakdown</h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                  Enter your SGPA for the semesters you've finished. Leave upcoming semesters blank.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button className="reset-calc-btn" onClick={clearAllSemesters} title="Clear all SGPA values">
+                  <span>Clear</span>
+                </button>
+                <button className="reset-calc-btn" onClick={resetSemesters} title="Reset to sample values">
+                  <RotateCcw size={13} />
+                  <span>Sample</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Semester Table */}
+            <div className="semesters-table-container">
+              <div className="semesters-table-head mono">
+                <span>Semester</span>
+                <span>SGPA (0 - 10)</span>
+                <span>Credits</span>
+                <span>Status</span>
+              </div>
+
+              <div className="semesters-table-body">
+                {semesters.map((s, idx) => {
+                  const isFilled = parseFloat(s.sgpa) > 0;
+                  return (
+                    <div key={s.sem} className={`semester-input-row ${isFilled ? 'row-active' : ''}`}>
+                      <div className="sem-label mono">
+                        <span className="sem-number-pill">Sem {s.sem}</span>
+                      </div>
+
+                      <div className="sem-sgpa-wrapper">
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="10"
+                          placeholder="e.g. 8.75"
+                          className="sem-sgpa-input mono"
+                          value={s.sgpa}
+                          onChange={(e) => updateSemester(idx, 'sgpa', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="sem-credits-wrapper">
+                        <select
+                          className="sem-credits-select mono"
+                          value={s.credits}
+                          onChange={(e) => updateSemester(idx, 'credits', Number(e.target.value))}
+                        >
+                          {[16, 18, 20, 21, 22, 23, 24, 25, 26, 28].map(cr => (
+                            <option key={cr} value={cr}>{cr} Cr</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="sem-status-cell mono">
+                        {isFilled ? (
+                          <span className="status-badge-done">
+                            <Check size={12} />
+                            <span>{(parseFloat(s.sgpa) * s.credits).toFixed(0)} pts</span>
+                          </span>
+                        ) : (
+                          <span className="status-badge-pending">—</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: CGPA Score Display */}
+          <div className="calc-right-col">
+            <div className="score-summary-card glass-panel">
+              <span className="score-label-sub">CGPA</span>
+              <div className="huge-score-display mono gradient-text-dual">
+                {computedCgpa}
+                <span className="score-denominator"> / 10.0</span>
+              </div>
+            </div>
+
+            {/* Quick Helper / Info Card */}
+            <div className="glass-panel" style={{ padding: '18px 20px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--neon-cyan)', fontWeight: 700, marginBottom: '8px' }}>
+                <Sparkles size={15} />
+                <span>How CGPA is Calculated</span>
+              </div>
+              <p style={{ lineHeight: 1.5, margin: 0 }}>
+                CGPA is the weighted average of your semester SGPAs weighted by the credits of each semester:
+              </p>
+              <div className="mono" style={{ background: 'rgba(0,0,0,0.4)', padding: '8px 12px', borderRadius: '6px', margin: '10px 0', fontSize: '0.78rem', color: 'var(--neon-blue)' }}>
+                CGPA = Σ(SGPA × Sem Credits) / Σ(Total Credits)
+              </div>
+              <p style={{ fontSize: '0.78rem', margin: 0, color: 'var(--text-dim)' }}>
+                Standard B.Tech degree requires <strong>160 credits</strong> across 8 semesters.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TAB 3: Academic Guide & Explanation (PESU-pedia style) */}
       {calcMode === 'guide' && (
         <div className="glass-panel" style={{ padding: '36px 32px' }}>
@@ -437,13 +399,13 @@ export function CgpaCalculator() {
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '16px' }} className="gradient-text-blue">
               How the University GPA & Credit System Works
             </h3>
-            
+
             <section style={{ marginBottom: '28px' }}>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>
                 1. The 160-Credit Degree Rule
               </h4>
               <p style={{ color: 'var(--text-muted)', lineHeight: 1.6, fontSize: '0.92rem' }}>
-                To obtain your B.Tech engineering degree, you must earn a minimum of <strong>160 credits</strong> across 4 years (8 semesters). These credits are allocated to core theory subjects (usually 4 or 5 credits), electives (3 or 4 credits), and laboratories/seminars (1 or 2 credits). Credits act as weights that determine the relative importance of each subject.
+                To obtain your B.Tech engineering degree, you must earn a minimum of <strong>160 credits</strong> across 4 years (8 semesters). Credits act as weights that determine the relative importance of each subject.
               </p>
             </section>
 

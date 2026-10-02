@@ -41,11 +41,6 @@ export function Hero({ totalNotes, totalPages, totalSubjects, onExploreClick }) 
             <span className="stat-number text-neon-cyan">{totalSubjects}</span>
             <span className="stat-label">Subjects</span>
           </div>
-
-          <div className="stat-card">
-            <span className="stat-number" style={{ color: '#10B981' }}>0₹</span>
-            <span className="stat-label">100% Free Forever</span>
-          </div>
         </div>
 
         {/* CTAs */}

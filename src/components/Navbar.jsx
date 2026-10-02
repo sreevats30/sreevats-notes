@@ -16,12 +16,14 @@ export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
           tabIndex={0}
         >
           <div className="logo-icon-box">
-            <BookOpen size={20} className="logo-svg" />
-            <span className="logo-sparkle"></span>
+            <img 
+              src="/phoenix-logo.jpg" 
+              alt="Phoenix Logo" 
+              className="logo-phoenix-img"
+            />
           </div>
           <div className="brand-text-col">
             <span className="brand-title">{SITE_CONFIG.name}</span>
-            <span className="brand-badge">FREE NOTES</span>
           </div>
         </div>
 

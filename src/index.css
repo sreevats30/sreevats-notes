@@ -271,35 +271,45 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 70px;
+  height: 74px;
   gap: 16px;
 }
 
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   cursor: pointer;
   user-select: none;
 }
 
 .logo-icon-box {
   position: relative;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: rgba(0, 240, 255, 0.1);
-  border: 1px solid var(--neon-blue);
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(10, 14, 24, 0.85);
+  border: 1.5px solid var(--neon-blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+  overflow: hidden;
+  padding: 2px;
   transition: all var(--transition-fast);
 }
 
 .brand-logo:hover .logo-icon-box {
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
-  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.7), 0 0 14px rgba(255, 0, 85, 0.35);
+  transform: rotate(3deg) scale(1.06);
+}
+
+.logo-phoenix-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 11px;
+  display: block;
 }
 
 .logo-svg {
@@ -309,22 +319,15 @@ h1, h2, h3, h4, h5, h6 {
 .brand-text-col {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .brand-title {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.32rem;
   letter-spacing: -0.01em;
   color: #FFFFFF;
-}
-
-.brand-badge {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  color: var(--neon-blue);
-  font-weight: 600;
 }
 
 .desktop-nav {
@@ -461,9 +464,119 @@ h1, h2, h3, h4, h5, h6 {
   padding: 60px 0 40px;
   text-align: center;
   position: relative;
+  overflow: hidden;
+}
+
+/* Global Dynamic Ambient Phoenix Backdrop (Fixed during scroll, fills left & right negative space) */
+.ambient-phoenix-viewport {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-phoenix-node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ambient-phoenix-node .ambient-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: screen;
+}
+
+/* Center Majestic Phoenix */
+.ambient-center {
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 820px;
+  height: 820px;
+  max-width: 90vw;
+  opacity: 0.22;
+  filter: brightness(1.3) contrast(1.15) drop-shadow(0 0 50px rgba(0, 240, 255, 0.6)) drop-shadow(0 0 80px rgba(255, 0, 85, 0.45));
+  mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 32%, transparent 74%);
+  -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 32%, transparent 74%);
+  animation: phoenixAmbientCenter 14s ease-in-out infinite alternate;
+}
+
+/* Left Flank Wing */
+.ambient-left-flank {
+  top: 25%;
+  left: -150px;
+  width: 600px;
+  height: 600px;
+  opacity: 0.18;
+  filter: brightness(1.25) contrast(1.15) drop-shadow(0 0 45px rgba(0, 240, 255, 0.5));
+  mask-image: radial-gradient(circle at 65% 50%, rgba(0,0,0,1) 28%, transparent 74%);
+  -webkit-mask-image: radial-gradient(circle at 65% 50%, rgba(0,0,0,1) 28%, transparent 74%);
+  transform: rotate(18deg);
+  animation: phoenixAmbientLeft 16s ease-in-out infinite alternate;
+}
+
+/* Right Flank Wing */
+.ambient-right-flank {
+  top: 35%;
+  right: -150px;
+  width: 600px;
+  height: 600px;
+  opacity: 0.18;
+  filter: brightness(1.25) contrast(1.15) drop-shadow(0 0 45px rgba(255, 0, 85, 0.5));
+  mask-image: radial-gradient(circle at 35% 50%, rgba(0,0,0,1) 28%, transparent 74%);
+  -webkit-mask-image: radial-gradient(circle at 35% 50%, rgba(0,0,0,1) 28%, transparent 74%);
+  transform: rotate(-18deg) scaleX(-1);
+  animation: phoenixAmbientRight 18s ease-in-out infinite alternate;
+}
+
+@keyframes phoenixAmbientCenter {
+  0% {
+    transform: translate(-50%, -50%) scale(0.97);
+    opacity: 0.19;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.03);
+    opacity: 0.25;
+  }
+}
+
+@keyframes phoenixAmbientLeft {
+  0% {
+    transform: translateY(0px) rotate(16deg) scale(0.98);
+  }
+  100% {
+    transform: translateY(-20px) rotate(20deg) scale(1.02);
+  }
+}
+
+@keyframes phoenixAmbientRight {
+  0% {
+    transform: translateY(0px) rotate(-16deg) scaleX(-1) scale(0.98);
+  }
+  100% {
+    transform: translateY(20px) rotate(-20deg) scaleX(-1) scale(1.02);
+  }
+}
+
+@media (max-width: 1024px) {
+  .ambient-left-flank,
+  .ambient-right-flank {
+    display: none;
+  }
+  .ambient-center {
+    width: 540px;
+    height: 540px;
+  }
 }
 
 .hero-container {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -509,10 +622,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   width: 100%;
-  max-width: 760px;
+  max-width: 600px;
   margin-bottom: 32px;
 }
 

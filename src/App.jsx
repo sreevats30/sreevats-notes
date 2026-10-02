@@ -94,6 +94,19 @@ export function App() {
 
   return (
     <div className="app-root">
+      {/* Global Dynamic Ambient Phoenix Viewport (stays fixed on scroll, fills empty left & right flanks) */}
+      <div className="ambient-phoenix-viewport" aria-hidden="true">
+        <div className="ambient-phoenix-node ambient-center">
+          <img src="/phoenix-logo.jpg" alt="" className="ambient-img" />
+        </div>
+        <div className="ambient-phoenix-node ambient-left-flank">
+          <img src="/phoenix-logo.jpg" alt="" className="ambient-img" />
+        </div>
+        <div className="ambient-phoenix-node ambient-right-flank">
+          <img src="/phoenix-logo.jpg" alt="" className="ambient-img" />
+        </div>
+      </div>
+
       {/* Top Navbar */}
       <Navbar
         onOpenSearch={() => setSearchOpen(true)}
