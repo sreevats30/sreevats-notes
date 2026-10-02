@@ -17,7 +17,7 @@ export const SITE_CONFIG = {
   author: 'Sreevats',
   authorRole: 'Student & Creator',
   watermarkText: 'NOTES-SREEVATS • FREE STUDENT RESOURCE',
-  contactEmail: 'contact@notes-sreevats.pages.dev',
+  contactEmail: 'sreevats30@gmail.com',
   githubUrl: 'https://github.com',
 };
 

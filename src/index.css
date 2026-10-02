@@ -1838,40 +1838,115 @@ h1, h2, h3, h4, h5, h6 {
   transition: all var(--transition-fast);
 }
 
-.add-course-btn:hover {
-  background: rgba(0, 240, 255, 0.08);
-  border-color: var(--neon-blue);
-  color: var(--neon-blue);
-}
-
-.cgpa-extra-inputs {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.cgpa-extra-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--neon-blue);
-}
-
-.input-pair-grid {
+/* Semesters Table Layout (PESU-pedia style) */
+.semesters-table-head {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 90px 1.4fr 1.1fr 90px;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
 }
 
-.input-field-group {
+.semesters-table-body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
+  margin-top: 10px;
 }
 
-.input-label {
+.semester-input-row {
+  display: grid;
+  grid-template-columns: 90px 1.4fr 1.1fr 90px;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.semester-input-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.semester-input-row.row-active {
+  background: rgba(0, 240, 255, 0.03);
+  border-color: rgba(0, 240, 255, 0.16);
+}
+
+.sem-number-pill {
   font-size: 0.78rem;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--neon-blue);
+  background: rgba(0, 240, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.sem-sgpa-input {
+  background: rgba(8, 9, 14, 0.8);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  outline: none;
+  width: 100%;
+  transition: border-color var(--transition-fast);
+}
+
+.sem-sgpa-input:focus {
+  border-color: var(--neon-blue);
+}
+
+.sem-credits-select {
+  background: rgba(8, 9, 14, 0.8);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 7px 8px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.sem-credits-select:focus {
+  border-color: var(--neon-blue);
+}
+
+.sem-status-cell {
+  display: flex;
+  align-items: center;
+  font-size: 0.78rem;
+}
+
+.status-badge-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.status-badge-pending {
+  color: var(--text-dim);
+}
+
+.target-card-inner {
+  border-color: rgba(0, 240, 255, 0.18);
+  background: rgba(0, 240, 255, 0.02);
+}
+
+.impossible-warning {
+  color: var(--neon-red);
+  font-size: 0.78rem;
 }
 
 .calc-num-input {

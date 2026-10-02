@@ -32,10 +32,10 @@ export function Footer() {
               <span>Academic Integrity & Takedown</span>
             </div>
             <p className="legal-text">
-              All notes uploaded here are original student-created study summaries, derivations, and open educational solutions. No copyrighted textbooks or paid course materials are hosted.
+              All notes uploaded here are original student-created study material and open educational solutions.
             </p>
             <p className="takedown-text">
-              If you have any feedback or notice any material needing attribution/removal, please contact: <span className="mono text-neon-cyan">{SITE_CONFIG.contactEmail}</span>
+              If you have any feedback or notice any material needing attribution/removal, please contact: <a href="mailto:sreevats30@gmail.com" className="mono text-neon-cyan" style={{ textDecoration: 'none' }}>sreevats30@gmail.com</a>
             </p>
           </div>
         </div>
