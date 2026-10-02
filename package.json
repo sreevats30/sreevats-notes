@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check:notes": "node scripts/check-notes.js",
-    "deploy": "npm run check:notes && npm run build && wrangler pages deploy dist"
+    "check": "node scripts/check-notes.js",
+    "deploy": "npm run check && vite build && wrangler pages deploy dist --project-name notes-sreevats --branch main"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",

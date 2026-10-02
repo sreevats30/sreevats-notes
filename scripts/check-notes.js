@@ -7,69 +7,129 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 const notesJsonPath = path.join(rootDir, 'src', 'data', 'notes.json');
-const publicNotesDir = path.join(rootDir, 'public', 'notes');
-const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25 MiB Cloudflare Pages limit
+const publicDir = path.join(rootDir, 'public');
+const publicNotesDir = path.join(publicDir, 'notes');
 
-console.log('🔍 Running pre-deploy validation on notes.json...');
+const MAX_PDF_SIZE_BYTES = 25 * 1024 * 1024; // 25 MiB limit for Cloudflare Pages
+const MAX_TOTAL_PUBLIC_FILES = 20000;         // Cloudflare Pages free tier limit
 
+console.log('🔍 Checking notes before deploy...\n');
+
+let hasFailed = false;
+
+// 1. Verify and read notes.json
 if (!fs.existsSync(notesJsonPath)) {
   console.error(`❌ Error: notes.json not found at ${notesJsonPath}`);
   process.exit(1);
 }
 
-const rawData = fs.readFileSync(notesJsonPath, 'utf8');
-let notes;
+let notes = [];
 try {
-  notes = JSON.parse(rawData);
+  const content = fs.readFileSync(notesJsonPath, 'utf8');
+  notes = JSON.parse(content);
 } catch (err) {
-  console.error('❌ Error parsing notes.json as JSON:', err.message);
+  console.error(`❌ Error: Failed to parse notes.json: ${err.message}`);
   process.exit(1);
 }
 
 if (!Array.isArray(notes)) {
-  console.error('❌ Error: notes.json root must be an array of note objects.');
+  console.error('❌ Error: notes.json must contain an array of note entries.');
   process.exit(1);
 }
 
-let hasError = false;
-let totalChecked = 0;
+// 2. Scan all files in public/ to check 20,000 files limit and gather all PDFs
+function getAllFilesRecursively(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...getAllFilesRecursively(fullPath));
+    } else if (entry.isFile()) {
+      files.push(fullPath);
+    }
+  }
+  return files;
+}
+
+const allPublicFiles = getAllFilesRecursively(publicDir);
+const totalPublicFilesCount = allPublicFiles.length;
+
+if (totalPublicFilesCount > MAX_TOTAL_PUBLIC_FILES) {
+  console.error(`❌ Error: public/ folder contains ${totalPublicFilesCount.toLocaleString()} files (maximum Cloudflare Pages limit is 20,000).`);
+  hasFailed = true;
+}
+
+// 3. Scan all PDFs inside public/notes/
+const allPdfsInNotesDir = getAllFilesRecursively(publicNotesDir).filter(f => f.toLowerCase().endsWith('.pdf'));
+
+// Normalize paths to forward slashes relative to public/notes
+const discoveredPdfRelativeMap = new Map();
+let totalPdfSizeBytes = 0;
+
+for (const pdfPath of allPdfsInNotesDir) {
+  const relPath = path.relative(publicNotesDir, pdfPath).split(path.sep).join('/');
+  const stat = fs.statSync(pdfPath);
+  totalPdfSizeBytes += stat.size;
+  discoveredPdfRelativeMap.set(relPath, {
+    fullPath: pdfPath,
+    size: stat.size
+  });
+
+  // Check 25 MiB per-file limit on every PDF in public/notes/
+  if (stat.size > MAX_PDF_SIZE_BYTES) {
+    const sizeMiB = (stat.size / (1024 * 1024)).toFixed(2);
+    console.error(`❌ Error: PDF "${relPath}" is ${sizeMiB} MiB, which exceeds Cloudflare Pages 25 MiB limit.`);
+    hasFailed = true;
+  }
+}
+
+// 4. Verify every note in notes.json
+const registeredFilesSet = new Set();
 
 for (const note of notes) {
-  totalChecked++;
   if (!note.file) {
-    console.error(`❌ Note [${note.id || 'unknown'}] is missing the "file" property.`);
-    hasError = true;
+    console.error(`❌ Error: Note [${note.id || 'unknown'}] is missing the "file" property.`);
+    hasFailed = true;
     continue;
   }
 
-  // Construct expected file path in public/notes
-  const filePath = path.join(publicNotesDir, note.file);
+  // Normalize note file path to forward slashes without leading slashes
+  const normalizedFile = note.file.replace(/^[/\\]+/, '').split(path.sep).join('/');
+  registeredFilesSet.add(normalizedFile);
 
-  if (!fs.existsSync(filePath)) {
-    console.error(`❌ File not found for note [${note.id}]:`);
-    console.error(`   Expected at: ${filePath}`);
-    console.error(`   Referenced as: ${note.file}`);
-    hasError = true;
-    continue;
-  }
+  const fullFilePath = path.join(publicNotesDir, normalizedFile);
 
-  const stat = fs.statSync(filePath);
-  const sizeMB = stat.size / (1024 * 1024);
-
-  if (stat.size > MAX_FILE_SIZE_BYTES) {
-    console.error(`❌ File exceeds Cloudflare Pages 25 MiB limit for note [${note.id}]:`);
-    console.error(`   File: ${note.file}`);
-    console.error(`   Size: ${sizeMB.toFixed(2)} MiB (Max allowed: 25.00 MiB)`);
-    hasError = true;
-  } else {
-    console.log(`  ✓ [${note.id}] ${note.file} (${sizeMB.toFixed(2)} MB)`);
+  if (!fs.existsSync(fullFilePath)) {
+    console.error(`❌ Error: Note [${note.id}]: File "${note.file}" not found in public/notes/.`);
+    hasFailed = true;
   }
 }
 
-if (hasError) {
-  console.error('\n❌ Pre-deploy check failed! Fix the issues above before deploying.');
+// 5. Warn (not fail) about PDFs in public/notes/ that are not listed in notes.json
+for (const [relPath] of discoveredPdfRelativeMap.entries()) {
+  if (!registeredFilesSet.has(relPath)) {
+    console.warn(`⚠️  Warning: "${relPath}" exists in public/notes/ but is not listed in notes.json.`);
+  }
+}
+
+// 6. Print summary
+const totalNotesCount = notes.length;
+const totalPdfsCount = allPdfsInNotesDir.length;
+const totalSizeMB = (totalPdfSizeBytes / (1024 * 1024)).toFixed(2);
+
+console.log('--- Summary ---');
+console.log(`Notes in notes.json : ${totalNotesCount}`);
+console.log(`PDFs in public/notes: ${totalPdfsCount}`);
+console.log(`Total PDF storage   : ${totalSizeMB} MB`);
+console.log(`Total public files  : ${totalPublicFilesCount} / 20,000 max`);
+console.log('---------------\n');
+
+if (hasFailed) {
+  console.error('❌ Check failed. Resolve the errors above before deploying.\n');
   process.exit(1);
 }
 
-console.log(`\n✅ All ${totalChecked} note files exist and are within the 25 MiB limit! Ready for deployment.\n`);
+console.log('✅ Check passed! All notes verified successfully.\n');
 process.exit(0);
