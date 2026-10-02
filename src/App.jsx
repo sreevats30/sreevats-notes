@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import rawNotesData from './data/notes.json';
+import rawNotesData from './data/notes';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { SubjectFilter } from './components/SubjectFilter';

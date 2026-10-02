@@ -6,6 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
+const subjectsDir = path.join(rootDir, 'src', 'data', 'subjects');
 const notesJsonPath = path.join(rootDir, 'src', 'data', 'notes.json');
 const tagsJsonPath = path.join(rootDir, 'src', 'data', 'tags.json');
 const publicDir = path.join(rootDir, 'public');
@@ -17,24 +18,69 @@ const MAX_TOTAL_PUBLIC_FILES = 20000;         // Cloudflare Pages free tier limi
 console.log('🔍 Checking notes before deploy...\n');
 
 let hasFailed = false;
-
-// 1. Verify and read notes.json
-if (!fs.existsSync(notesJsonPath)) {
-  console.error(`❌ Error: notes.json not found at ${notesJsonPath}`);
-  process.exit(1);
-}
-
 let notes = [];
-try {
-  const content = fs.readFileSync(notesJsonPath, 'utf8');
-  notes = JSON.parse(content);
-} catch (err) {
-  console.error(`❌ Error: Failed to parse notes.json: ${err.message}`);
-  process.exit(1);
+let subjectFiles = [];
+
+// 1. Verify and read notes metadata directly from public/notes/<subject>/*.json
+let publicSubjectFiles = [];
+if (fs.existsSync(publicNotesDir)) {
+  const entries = fs.readdirSync(publicNotesDir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const folderName = entry.name;
+      const folderPath = path.join(publicNotesDir, folderName);
+      const jsonFiles = fs.readdirSync(folderPath).filter(f => f.endsWith('.json'));
+      for (const jsonFile of jsonFiles) {
+        const fullJsonPath = path.join(folderPath, jsonFile);
+        try {
+          const content = JSON.parse(fs.readFileSync(fullJsonPath, 'utf8'));
+          const items = Array.isArray(content) ? content : [content];
+          for (const item of items) {
+            let filePath = item.file || '';
+            if (folderName && !filePath.includes('/') && !filePath.includes('\\')) {
+              filePath = `${folderName}/${filePath}`;
+            }
+            notes.push({ ...item, file: filePath });
+          }
+          publicSubjectFiles.push(`${folderName}/${jsonFile}`);
+        } catch (err) {
+          console.error(`❌ Error parsing ${folderName}/${jsonFile}: ${err.message}`);
+          hasFailed = true;
+        }
+      }
+    }
+  }
 }
 
-if (!Array.isArray(notes)) {
-  console.error('❌ Error: notes.json must contain an array of note entries.');
+// Fallback to src/data/subjects/ if none in public/notes/
+if (notes.length === 0 && fs.existsSync(subjectsDir)) {
+  subjectFiles = fs.readdirSync(subjectsDir).filter(f => f.endsWith('.json'));
+  for (const file of subjectFiles) {
+    const fullSubjectPath = path.join(subjectsDir, file);
+    try {
+      const content = JSON.parse(fs.readFileSync(fullSubjectPath, 'utf8'));
+      if (Array.isArray(content)) {
+        notes.push(...content);
+      } else {
+        notes.push(content);
+      }
+    } catch (err) {
+      console.error(`❌ Error parsing subject file "${file}": ${err.message}`);
+      process.exit(1);
+    }
+  }
+} else if (notes.length === 0 && fs.existsSync(notesJsonPath)) {
+  try {
+    const content = fs.readFileSync(notesJsonPath, 'utf8');
+    notes = JSON.parse(content);
+  } catch (err) {
+    console.error(`❌ Error: Failed to parse notes.json: ${err.message}`);
+    process.exit(1);
+  }
+}
+
+if (!Array.isArray(notes) || notes.length === 0) {
+  console.error('❌ Error: No note entries found in your subject JSON files.');
   process.exit(1);
 }
 
@@ -131,7 +177,12 @@ const totalPdfsCount = allPdfsInNotesDir.length;
 const totalSizeMB = (totalPdfSizeBytes / (1024 * 1024)).toFixed(2);
 
 console.log('--- Summary ---');
-console.log(`Notes in notes.json : ${totalNotesCount}`);
+if (publicSubjectFiles.length > 0) {
+  console.log(`Subject JSONs (${publicSubjectFiles.length}) : ${publicSubjectFiles.join(', ')}`);
+} else if (subjectFiles.length > 0) {
+  console.log(`Subject files (${subjectFiles.length}) : ${subjectFiles.join(', ')}`);
+}
+console.log(`Total notes listed  : ${totalNotesCount}`);
 console.log(`PDFs in public/notes: ${totalPdfsCount}`);
 console.log(`Total PDF storage   : ${totalSizeMB} MB`);
 console.log(`Total public files  : ${totalPublicFilesCount} / 20,000 max`);
