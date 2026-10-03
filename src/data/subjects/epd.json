@@ -1,0 +1,94 @@
+[
+  {
+    "id": "epd-u1",
+    "title": "Electronic Principles and Devices - Unit 1 Notes",
+    "subject": "Electronic Principles and Devices",
+    "subjectCode": "UE25EC141B",
+    "unit": "Unit 1",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 0,
+      "4 credits": 1,
+      "2 credits": 0
+    },
+    "file": "epd/EPD U1.pdf"
+  },
+  {
+    "id": "epd-u2",
+    "title": "Electronic Principles and Devices - Unit 2 Notes",
+    "subject": "Electronic Principles and Devices",
+    "subjectCode": "UE25EC141B",
+    "unit": "Unit 2",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 0,
+      "4 credits": 1,
+      "2 credits": 0
+    },
+    "file": "epd/EPD U2.pdf"
+  },
+  {
+    "id": "epd-u3",
+    "title": "Electronic Principles and Devices - Unit 3 Notes",
+    "subject": "Electronic Principles and Devices",
+    "subjectCode": "UE25EC141B",
+    "unit": "Unit 3",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 0,
+      "4 credits": 1,
+      "2 credits": 0
+    },
+    "file": "epd/EPD U3.pdf"
+  },
+  {
+    "id": "epd-u4",
+    "title": "Electronic Principles and Devices - Unit 4 Notes",
+    "subject": "Electronic Principles and Devices",
+    "subjectCode": "UE25EC141B",
+    "unit": "Unit 4",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 0,
+      "4 credits": 1,
+      "2 credits": 0
+    },
+    "file": "epd/EPD U4.pdf"
+  }
+]

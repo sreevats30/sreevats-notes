@@ -15,7 +15,7 @@ export function Footer() {
           <div className="footer-brand-col">
             <div className="footer-brand-header">
               <BookOpen size={20} className="text-neon-cyan" />
-              <span className="footer-brand-name">Notes</span>
+              <span className="footer-brand-name">{SITE_CONFIG.name}</span>
             </div>
             <p className="footer-tagline">
               Curated handwritten notes, derivations, and exam blueprints. Built to help students study smartly and ace their exams.

@@ -1,0 +1,94 @@
+[
+  {
+    "id": "chem-u1",
+    "title": "Engineering Chemistry: Unit 1 (Short Notes)",
+    "subject": "Engineering Chemistry",
+    "subjectCode": "UE25CY151B",
+    "unit": "Unit 1",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "chem/Chem U1.pdf"
+  },
+  {
+    "id": "chem-u1-long",
+    "title": "Engineering Chemistry: Unit 1 (Long Notes)",
+    "subject": "Engineering Chemistry",
+    "subjectCode": "UE25CY151B",
+    "unit": "Unit 1",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "chem/Chem U1 v2.pdf"
+  },
+  {
+    "id": "chem-u2",
+    "title": "Engineering Chemistry: Unit 2 (Short Notes)",
+    "subject": "Engineering Chemistry",
+    "subjectCode": "UE25CY151B",
+    "unit": "Unit 2",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "chem/Chem U2.pdf"
+  },
+  {
+    "id": "chem-u2-long",
+    "title": "Engineering Chemistry: Unit 2 (Long Notes)",
+    "subject": "Engineering Chemistry",
+    "subjectCode": "UE25CY151B",
+    "unit": "Unit 2",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "chem/Chem U2 v2.pdf"
+  }
+]

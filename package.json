@@ -1,5 +1,5 @@
 {
-  "name": "notes-sreevats",
+  "name": "sreevats-notes",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "sync": "node scripts/generate-pdf-meta.js",
     "check": "node scripts/check-notes.js",
-    "deploy": "npm run check && vite build && wrangler pages deploy dist --project-name notes-sreevats --branch main"
+    "deploy": "npm run check && vite build && wrangler pages deploy dist --project-name sreevats-notes --branch main"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",

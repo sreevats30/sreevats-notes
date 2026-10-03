@@ -11,6 +11,7 @@ import { CgpaCalculator } from './components/CgpaCalculator';
 import { ExamPrep } from './components/ExamPrep';
 import { Credits } from './components/Credits';
 import { Footer } from './components/Footer';
+import { SupportCard, QrModal } from './components/SupportCard';
 import { BookOpen, Search, Sparkles, FilterX, HelpCircle, Layers, ArrowRight } from 'lucide-react';
 import { getNoteTags } from './config';
 
@@ -30,6 +31,7 @@ export function App() {
   // Modals
   const [searchOpen, setSearchOpen] = useState(false);
   const [previewNote, setPreviewNote] = useState(null);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   // Global Ctrl+K / Cmd+K listener
   useEffect(() => {
@@ -86,10 +88,19 @@ export function App() {
     });
   }, [notes, selectedSubject, selectedUnit, selectedType, selectedBranch, selectedSemester, selectedTag, sortBy]);
 
+  // Exam Prep Papers
+  const examPapers = useMemo(() => getExamPapers(), []);
+
   // Stats calculation
-  const totalPages = useMemo(() => {
+  const notesPages = useMemo(() => {
     return notes.reduce((acc, n) => acc + (n.pages || 0), 0);
   }, [notes]);
+
+  const examPages = useMemo(() => {
+    return examPapers.reduce((acc, p) => acc + (p.pages || 0), 0);
+  }, [examPapers]);
+
+  const totalPages = notesPages + examPages;
 
   const totalSubjects = useMemo(() => {
     return new Set(notes.map(n => n.subject)).size;
@@ -97,9 +108,8 @@ export function App() {
 
   // Combined searchable resources (Notes + Exam Prep Papers)
   const allSearchableResources = useMemo(() => {
-    const examPapers = getExamPapers();
     return [...notes, ...examPapers];
-  }, [notes]);
+  }, [notes, examPapers]);
 
   return (
     <div className="app-root">
@@ -130,7 +140,11 @@ export function App() {
             {/* Hero Section */}
             <Hero
               totalNotes={notes.length}
+              totalExamPapers={examPapers.length}
+              totalResources={notes.length + examPapers.length}
               totalPages={totalPages}
+              notesPages={notesPages}
+              examPages={examPages}
               totalSubjects={totalSubjects}
               onExploreClick={() => {
                 const el = document.getElementById('notes-explorer-section');
@@ -201,6 +215,9 @@ export function App() {
                   ))}
                 </div>
               )}
+
+              {/* Support / Tip Banner at bottom of Notes Library */}
+              <SupportCard onOpenQr={() => setQrModalOpen(true)} />
             </section>
           </>
         ) : activeTab === 'examprep' ? (
@@ -234,6 +251,12 @@ export function App() {
         note={previewNote}
         isOpen={Boolean(previewNote)}
         onClose={() => setPreviewNote(null)}
+      />
+
+      {/* UPI QR Code Modal */}
+      <QrModal
+        isOpen={qrModalOpen}
+        onClose={() => setQrModalOpen(false)}
       />
 
       {/* Site Footer */}

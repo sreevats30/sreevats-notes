@@ -58,22 +58,30 @@ export function NoteCard({ note, onPreview }) {
         </div>
       )}
 
-      {/* Card Meta Stats (Pages, Size, Added Date, Type) */}
-      <div className="card-meta-row">
-        <div className="meta-item" title="Page count">
-          <Layers size={14} className="meta-icon" />
-          <span className="mono">{note.pages} pages</span>
-        </div>
+      {/* Card Meta Stats (Pages, Size, Type) */}
+      {(note.pages != null || note.sizeMB != null || note.type) && (
+        <div className="card-meta-row">
+          {note.pages != null && (
+            <div className="meta-item" title="Page count">
+              <Layers size={14} className="meta-icon" />
+              <span className="mono">{note.pages} pages</span>
+            </div>
+          )}
 
-        <div className="meta-item" title="File size">
-          <FileText size={14} className="meta-icon" />
-          <span className="mono">{note.sizeMB} MB</span>
-        </div>
+          {note.sizeMB != null && (
+            <div className="meta-item" title="File size">
+              <FileText size={14} className="meta-icon" />
+              <span className="mono">{note.sizeMB} MB</span>
+            </div>
+          )}
 
-        <div className="meta-item note-type-pill" title="Note Format">
-          <span>{note.type}</span>
+          {note.type && (
+            <div className="meta-item note-type-pill" title="Note Format">
+              <span>{note.type}</span>
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Card Footer: Dual Actions Preview & Download */}
       <div className="card-actions-row">

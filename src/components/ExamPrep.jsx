@@ -15,6 +15,14 @@ export function ExamPrep({ onPreview }) {
     );
   }, [papers, searchQuery]);
 
+  const totalExamPages = useMemo(() => {
+    return papers.reduce((acc, p) => acc + (p.pages || 0), 0);
+  }, [papers]);
+
+  const filteredPapersPages = useMemo(() => {
+    return filteredPapers.reduce((acc, p) => acc + (p.pages || 0), 0);
+  }, [filteredPapers]);
+
   return (
     <section className="container exam-prep-container">
       {/* Header Banner */}
@@ -56,7 +64,10 @@ export function ExamPrep({ onPreview }) {
 
         <div className="exam-count-badge mono">
           <span className="count-num text-neon-cyan">{filteredPapers.length}</span>
-          <span className="count-label">Resources Available</span>
+          <span className="count-label">Papers</span>
+          <span className="count-sep">•</span>
+          <span className="count-num text-neon-red">{filteredPapersPages}</span>
+          <span className="count-label">Pages</span>
         </div>
       </div>
 
@@ -70,7 +81,10 @@ export function ExamPrep({ onPreview }) {
                   <FileText size={22} className="text-neon-cyan" />
                 </div>
                 <div className="paper-meta-col">
-                  <span className="paper-type-badge mono">PDF Document</span>
+                  <span className="paper-type-badge mono">
+                    {paper.pages > 0 ? `${paper.pages} Pages` : 'PDF Document'}
+                    {paper.sizeMB ? ` • ${paper.sizeMB} MB` : ''}
+                  </span>
                 </div>
               </div>
 

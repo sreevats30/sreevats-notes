@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { generatePdfMeta } from './generate-pdf-meta.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +17,7 @@ const MAX_PDF_SIZE_BYTES = 25 * 1024 * 1024; // 25 MiB limit for Cloudflare Page
 const MAX_TOTAL_PUBLIC_FILES = 20000;         // Cloudflare Pages free tier limit
 
 console.log('🔍 Checking notes before deploy...\n');
+await generatePdfMeta();
 
 let hasFailed = false;
 let notes = [];

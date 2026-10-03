@@ -1,0 +1,48 @@
+[
+  {
+    "id": "stats-u1-qb",
+    "title": "Mechanics Statics: Unit 1 — Question Bank",
+    "subject": "Engineering Mechanics-Statics",
+    "subjectCode": "UE25CV141A",
+    "unit": "Unit 1",
+    "type": "Digital",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 0,
+      "Digital notes": 1,
+      "5 credits": 0,
+      "4 credits": 1,
+      "2 credits": 0
+    },
+    "file": "mech stats/U1 QB - Mech Stats.pdf"
+  },
+  {
+    "id": "stats-u2-qb",
+    "title": "Mechanics Statics: Unit 2 — Question Bank",
+    "subject": "Engineering Mechanics-Statics",
+    "subjectCode": "UE25CV141A",
+    "unit": "Unit 2",
+    "type": "Digital",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 0,
+      "Digital notes": 1,
+      "5 credits": 0,
+      "4 credits": 1,
+      "2 credits": 0
+    },
+    "file": "mech stats/U2 QB - Mech Stats.pdf"
+  }
+]

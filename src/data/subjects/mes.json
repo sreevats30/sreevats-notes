@@ -1,0 +1,48 @@
+[
+    {
+        "id": "mech-u1",
+        "title": "Mechanical Engineering Sciences - Unit 1 Notes",
+        "subject": "Mechanical Engineering Sciences",
+        "subjectCode": "UE25ME141A",
+        "unit": "Unit 1",
+        "type": "Handwritten",
+        "tags": {
+            "Phy cycle": 1,
+            "Chem cycle": 0,
+            "Common subject": 0,
+            "Formula sheet": 0,
+            "Slides": 0,
+            "Notes": 0,
+            "Practice": 0,
+            "Handwritten notes": 1,
+            "Digital notes": 0,
+            "5 credits": 0,
+            "4 credits": 1,
+            "2 credits": 0
+        },
+        "file": "mes/Mechanical U1.pdf"
+    },
+    {
+        "id": "mech-u2",
+        "title": "Mechanical Engineering Sciences - Unit 2 Notes",
+        "subject": "Mechanical Engineering Sciences",
+        "subjectCode": "UE25ME141A",
+        "unit": "Unit 2",
+        "type": "Handwritten",
+        "tags": {
+            "Phy cycle": 1,
+            "Chem cycle": 0,
+            "Common subject": 0,
+            "Formula sheet": 0,
+            "Slides": 0,
+            "Notes": 0,
+            "Practice": 0,
+            "Handwritten notes": 1,
+            "Digital notes": 0,
+            "5 credits": 0,
+            "4 credits": 1,
+            "2 credits": 0
+        },
+        "file": "mes/Mechanical U2.pdf"
+    }
+]

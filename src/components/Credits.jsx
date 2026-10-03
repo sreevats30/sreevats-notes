@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sparkles, Heart, Instagram, Linkedin, ExternalLink, GraduationCap, Clock } from 'lucide-react';
 import { contributors, IS_COMING_SOON } from '../data/credits';
+import { SupportCard, QrModal } from './SupportCard';
 
 export function Credits() {
+  const [qrOpen, setQrOpen] = useState(false);
+
   // Format social URLs safely
   const getInstagramUrl = (handleOrUrl) => {
     if (!handleOrUrl) return null;
@@ -31,6 +34,18 @@ export function Credits() {
           Credits &amp; <span className="gradient-text-dual">Contributors</span>
         </h2>
       </div>
+
+      {/* Support / Tip Banner */}
+      <SupportCard 
+        onOpenQr={() => setQrOpen(true)} 
+        className="credits-support-wrap"
+      />
+
+      {/* QR Modal */}
+      <QrModal 
+        isOpen={qrOpen} 
+        onClose={() => setQrOpen(false)} 
+      />
 
       {IS_COMING_SOON || contributors.length === 0 ? (
         /* Hidden / Under Update State */

@@ -10,13 +10,13 @@
 export const FILES_BASE_URL = '/notes/';
 
 export const SITE_CONFIG = {
-  name: 'notes-sreevats',
-  shortName: 'notes-sreevats',
-  tagline: 'High-Yield College Notes & Exam Blueprints',
-  description: 'Clean, verified handwritten notes, previous year question solutions, and quick formula sheets for engineering and science.',
-  author: 'Sreevats',
+  name: 'Sreevats Notes',
+  shortName: 'Sreevats Notes',
+  tagline: 'Study What Actually Matters',
+  description: 'Handwritten notes, formula sheets, slides, previous year questions. All organized here ;)',
+  author: 'Sreevatshan',
   authorRole: 'Student & Creator',
-  watermarkText: 'NOTES-SREEVATS • FREE STUDENT RESOURCE',
+  watermarkText: 'SREEVATS NOTES • FREE STUDENT RESOURCES',
   contactEmail: 'sreevats30@gmail.com',
   githubUrl: 'https://github.com',
 };

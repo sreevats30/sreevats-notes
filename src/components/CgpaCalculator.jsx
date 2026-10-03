@@ -22,14 +22,14 @@ const INITIAL_SEMESTERS = [
   { sem: 8, sgpa: '', credits: 24 },
 ];
 
-// Default courses: two 5-credit, three 4-credit, one 2-credit
+// Default courses: two 5-credit, three 4-credit, one 2-credit (totals to 8.67 SGPA)
 const DEFAULT_COURSES = [
-  { id: 1, name: 'Subject 1', credits: 5, grade: 'S' },
+  { id: 1, name: 'Subject 1', credits: 5, grade: 'A' },
   { id: 2, name: 'Subject 2', credits: 5, grade: 'A' },
   { id: 3, name: 'Subject 3', credits: 4, grade: 'A' },
   { id: 4, name: 'Subject 4', credits: 4, grade: 'B' },
   { id: 5, name: 'Subject 5', credits: 4, grade: 'B' },
-  { id: 6, name: 'Subject 6', credits: 2, grade: 'S' },
+  { id: 6, name: 'Subject 6', credits: 2, grade: 'A' },
 ];
 
 export function CgpaCalculator() {

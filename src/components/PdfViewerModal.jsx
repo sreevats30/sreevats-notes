@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   X, ZoomIn, ZoomOut, Maximize2, Download, 
-  Loader2, AlertCircle, RefreshCw, ChevronUp, ChevronDown 
+  Loader2, AlertCircle, RefreshCw, ChevronUp, ChevronDown, ArrowLeft 
 } from 'lucide-react';
 import { FILES_BASE_URL, SITE_CONFIG } from '../config';
 
@@ -101,8 +101,7 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pagesMeta, setPagesMeta] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [zoom, setZoom] = useState(1.0); // 1.0 = Fit Width
-  const [containerWidth, setContainerWidth] = useState(800);
+  const [zoom, setZoom] = useState(0.80); // Default 80% zoom
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [visiblePages, setVisiblePages] = useState(new Set());
@@ -115,18 +114,22 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     ? (note.file.startsWith('/') || note.file.startsWith('http') ? note.file : `${FILES_BASE_URL}${note.file}`) 
     : '';
 
-  // Measure viewport width
-  const updateContainerWidth = useCallback(() => {
+  // Measure viewport width and height
+  const updateContainerDimensions = useCallback(() => {
     if (viewportRef.current) {
-      const width = viewportRef.current.clientWidth;
-      setContainerWidth(width);
+      setContainerDimensions({
+        width: viewportRef.current.clientWidth,
+        height: viewportRef.current.clientHeight,
+      });
     }
   }, []);
 
+  const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
+
   useEffect(() => {
-    window.addEventListener('resize', updateContainerWidth);
-    return () => window.removeEventListener('resize', updateContainerWidth);
-  }, [updateContainerWidth]);
+    window.addEventListener('resize', updateContainerDimensions);
+    return () => window.removeEventListener('resize', updateContainerDimensions);
+  }, [updateContainerDimensions]);
 
   // Load PDF and pre-calculate all page dimensions for zero-layout-shift scrollbar
   const loadPdf = useCallback(async () => {
@@ -138,7 +141,7 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     setPagesMeta([]);
     setVisiblePages(new Set());
     setCurrentPage(1);
-    setZoom(1.0);
+    setZoom(0.80);
 
     try {
       const pdfjsLib = await getPdfjsLib();
@@ -180,10 +183,10 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     }
   }, [isOpen, loadPdf]);
 
-  // Initial width measurement once modal is rendered
+  // Initial measurement once modal is rendered
   useEffect(() => {
     if (!loading && pagesMeta.length > 0) {
-      updateContainerWidth();
+      updateContainerDimensions();
       // Restore scroll position if previously viewed in this session
       const savedScroll = sessionScrollPositions.get(note?.id);
       if (savedScroll && viewportRef.current) {
@@ -194,10 +197,10 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
         });
       }
     }
-  }, [loading, pagesMeta, updateContainerWidth, note?.id]);
+  }, [loading, pagesMeta, updateContainerDimensions, note?.id]);
 
-  // Calculate base width for fitting page to viewport
-  const basePageWidth = Math.max(260, Math.min(containerWidth - 36, 880));
+  // Standard document reading width (like Adobe / Chrome / Google Drive)
+  const basePageWidth = Math.min(Math.max(260, containerDimensions.width - 32), 740);
   const renderedPageWidth = Math.round(basePageWidth * zoom);
 
   // Setup IntersectionObserver for continuous virtualization (1-2 screens margin)
@@ -281,6 +284,26 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     }
   };
 
+  // Support browser/mobile device back button to close modal
+  useEffect(() => {
+    if (!isOpen) return;
+
+    window.history.pushState({ modal: 'pdf-viewer' }, '');
+
+    const handlePopState = () => {
+      onClose();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      if (window.history.state?.modal === 'pdf-viewer') {
+        window.history.back();
+      }
+    };
+  }, [isOpen, onClose]);
+
   // Keyboard navigation & zoom
   useEffect(() => {
     if (!isOpen) return;
@@ -290,15 +313,15 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
 
       if (e.key === '+' || e.key === '=') {
         e.preventDefault();
-        setZoom((z) => Math.min(2.5, +(z + 0.15).toFixed(2)));
+        setZoom((z) => Math.min(2.5, +(z + 0.1).toFixed(2)));
       }
       if (e.key === '-') {
         e.preventDefault();
-        setZoom((z) => Math.max(0.6, +(z - 0.15).toFixed(2)));
+        setZoom((z) => Math.max(0.35, +(z - 0.1).toFixed(2)));
       }
       if (e.key === '0') {
         e.preventDefault();
-        setZoom(1.0);
+        setZoom(0.80);
       }
       if (e.key === 'PageDown' || e.key === 'ArrowDown') {
         // Smooth scroll downward
@@ -348,10 +371,22 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
       >
         {/* Sticky Top Header Bar */}
         <div className="pdf-modal-header">
-          <div className="pdf-title-group">
-            <span className="pdf-modal-subject">{note.subject}</span>
-            <span className="pdf-modal-unit mono">{note.unit}</span>
-            <h3 className="pdf-modal-title" title={note.title}>{note.title}</h3>
+          <div className="pdf-header-left-col">
+            <button 
+              className="btn-modal-back" 
+              onClick={onClose}
+              title="Back to notes library"
+              aria-label="Back to notes"
+            >
+              <ArrowLeft size={18} />
+              <span className="btn-modal-back-text">Back</span>
+            </button>
+
+            <div className="pdf-title-group">
+              <span className="pdf-modal-subject">{note.subject}</span>
+              <span className="pdf-modal-unit mono">{note.unit}</span>
+              <h3 className="pdf-modal-title" title={note.title}>{note.title}</h3>
+            </div>
           </div>
 
           <div className="pdf-header-actions">
@@ -365,7 +400,7 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
               title="Download watermarked copy"
             >
               <Download size={15} />
-              <span>Download PDF</span>
+              <span className="btn-download-text">Download</span>
             </a>
 
             {/* Close Button */}
@@ -420,16 +455,16 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
           <div className="pdf-toolbar-group">
             <button 
               className="toolbar-btn" 
-              onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.15).toFixed(2)))} 
+              onClick={() => setZoom((z) => Math.max(0.35, +(z - 0.1).toFixed(2)))} 
               title="Zoom Out (-)"
-              disabled={zoom <= 0.6}
+              disabled={zoom <= 0.35}
             >
               <ZoomOut size={16} />
             </button>
             <span className="zoom-label mono">{Math.round(zoom * 100)}%</span>
             <button 
               className="toolbar-btn" 
-              onClick={() => setZoom((z) => Math.min(2.5, +(z + 0.15).toFixed(2)))} 
+              onClick={() => setZoom((z) => Math.min(2.5, +(z + 0.1).toFixed(2)))} 
               title="Zoom In (+)"
               disabled={zoom >= 2.5}
             >
@@ -437,11 +472,11 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
             </button>
             <button 
               className="toolbar-btn fit-btn" 
-              onClick={() => setZoom(1.0)} 
-              title="Fit to Width (100%)"
+              onClick={() => setZoom((z) => (z === 0.80 ? 1.0 : 0.80))} 
+              title={zoom === 0.80 ? "Fit Width (100%)" : "Default View (80%)"}
             >
               <Maximize2 size={15} />
-              <span className="hide-on-mobile">Fit Width</span>
+              <span className="hide-on-mobile">{zoom === 0.80 ? "100%" : "80%"}</span>
             </button>
           </div>
         </div>

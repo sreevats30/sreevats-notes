@@ -14,15 +14,32 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
     }
   }, [isOpen]);
 
-  // Handle Escape key
+  // Handle Escape key & mobile back button
   useEffect(() => {
+    if (!isOpen) return;
+
+    window.history.pushState({ modal: 'search-modal' }, '');
+
+    const handlePopState = () => {
+      onClose();
+    };
+
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
+
+    window.addEventListener('popstate', handlePopState);
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('keydown', handleKeyDown);
+      if (window.history.state?.modal === 'search-modal') {
+        window.history.back();
+      }
+    };
   }, [isOpen, onClose]);
 
   // Filter all resources (notes + exam papers)
