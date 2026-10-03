@@ -16,20 +16,28 @@ export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
       <header className="navbar-wrapper">
         <div className="container navbar-container">
           {/* Brand */}
-          <div 
-            className="brand-logo" 
-            onClick={() => handleTabSwitch('notes')}
-            role="button"
-            tabIndex={0}
-          >
-            <div className="logo-icon-box">
+          <div className="brand-logo">
+            <a 
+              href="https://en.wikipedia.org/wiki/Phoenix_(mythology)" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="logo-icon-box"
+              title="Phoenix (mythology) - Wikipedia"
+              onClick={(e) => e.stopPropagation()}
+            >
               <img 
                 src="/phoenix-logo.jpg" 
                 alt="Phoenix Logo" 
                 className="logo-phoenix-img"
               />
-            </div>
-            <div className="brand-text-col">
+            </a>
+            <div 
+              className="brand-text-col"
+              onClick={() => handleTabSwitch('notes')}
+              role="button"
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+            >
               <span className="brand-title">{SITE_CONFIG.name}</span>
             </div>
           </div>
