@@ -90,5 +90,28 @@
       "2 credits": 0
     },
     "file": "chem/Chem U2 v2.pdf"
+  },
+  {
+    "id": "chem-lab",
+    "title": "Chemistry Lab Record",
+    "subject": "Engineering Chemistry",
+    "subjectCode": "UE25CY151B",
+    "unit": "LAB",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "chem/Chem Lab.pdf"
   }
 ]
