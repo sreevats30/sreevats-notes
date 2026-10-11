@@ -1,1 +1,25 @@
-[]
+[
+    {
+        "id": "phy-u1",
+        "title": "Engineering Physics: Unit 1",
+        "subject": "Engineering Physics",
+        "subjectCode": "UE25PH151A",
+        "unit": "Unit 1",
+        "type": "Handwritten",
+        "tags": {
+            "Phy cycle": 1,
+            "Chem cycle": 0,
+            "Common subject": 0,
+            "Formula sheet": 0,
+            "Slides": 0,
+            "Notes": 0,
+            "Practice": 0,
+            "Handwritten notes": 1,
+            "Digital notes": 0,
+            "5 credits": 1,
+            "4 credits": 0,
+            "2 credits": 0
+        },
+        "file": "phy/Phy U1.pdf"
+    }
+]
