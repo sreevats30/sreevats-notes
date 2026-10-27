@@ -1,1 +1,71 @@
-[]
+[
+  {
+    "id": "python-u1-u4",
+    "title": "Units 1–4 Handwritten Notes",
+    "subject": "Python for Computational Problem Solving",
+    "subjectCode": "UE25CS151A",
+    "unit": "Units 1-4",
+    "type": "Handwritten",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 0,
+      "Common subject": 1,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 0,
+      "Handwritten notes": 1,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "python/Python.pdf"
+  },
+  {
+    "id": "python-u1-programs",
+    "title": "Python: Unit 1 Practice Programs",
+    "subject": "Python for Computational Problem Solving",
+    "subjectCode": "UE25CS151A",
+    "unit": "Unit 1",
+    "type": "Digital",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 0,
+      "Common subject": 1,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 1,
+      "Handwritten notes": 0,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "python/Python U1 Programs.pdf"
+  },
+  {
+    "id": "python-u2-programs",
+    "title": "Python: Unit 2 Practice Programs",
+    "subject": "Python for Computational Problem Solving",
+    "subjectCode": "UE25CS151A",
+    "unit": "Unit 2",
+    "type": "Digital",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 0,
+      "Common subject": 1,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 1,
+      "Handwritten notes": 0,
+      "Digital notes": 0,
+      "5 credits": 1,
+      "4 credits": 0,
+      "2 credits": 0
+    },
+    "file": "python/Python U2 Programs.pdf"
+  }
+]

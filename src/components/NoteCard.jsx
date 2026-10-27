@@ -23,7 +23,7 @@ export function NoteCard({ note, onPreview }) {
   const downloadUrl = `${FILES_BASE_URL}${note.file}`;
 
   return (
-    <article className={`note-card glass-panel ${isExamAlert ? 'border-accent-red' : 'border-accent-blue'}`}>
+    <article className="note-card glass-panel border-accent-blue">
       {/* Card Header: Subject Code / Branch */}
       <div className="card-top-row">
         <div className="subject-meta-group">

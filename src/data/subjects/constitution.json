@@ -1,0 +1,48 @@
+[
+  {
+    "id": "const-qb-gandhi",
+    "title": "Constitution: Question Bank — 'The Story of My Experiments with Truth' (Mahatma Gandhi)",
+    "subject": "Constitution of India",
+    "subjectCode": "UE25CI121B",
+    "unit": "Question Bank",
+    "type": "Question Bank",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 1,
+      "Handwritten notes": 0,
+      "Digital notes": 0,
+      "5 credits": 0,
+      "4 credits": 0,
+      "2 credits": 1
+    },
+    "file": "constitution/QB - Mahatma Gandhi.pdf"
+  },
+  {
+    "id": "const-qb-vivekananda",
+    "title": "Constitution: Question Bank — 'My India: The India Eternal' (Swami Vivekananda)",
+    "subject": "Constitution of India",
+    "subjectCode": "UE25CI121B",
+    "unit": "Question Bank",
+    "type": "Question Bank",
+    "tags": {
+      "Phy cycle": 0,
+      "Chem cycle": 1,
+      "Common subject": 0,
+      "Formula sheet": 0,
+      "Slides": 0,
+      "Notes": 0,
+      "Practice": 1,
+      "Handwritten notes": 0,
+      "Digital notes": 0,
+      "5 credits": 0,
+      "4 credits": 0,
+      "2 credits": 1
+    },
+    "file": "constitution/QB - Swami Vivekananda.pdf"
+  }
+]

@@ -5,13 +5,15 @@ import {
 } from 'lucide-react';
 import { FILES_BASE_URL, SITE_CONFIG } from '../config';
 
+import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+
 // Global cache for dynamic pdfjs-dist import to avoid bundle bloating
 let pdfjsLibPromise = null;
 function getPdfjsLib() {
   if (!pdfjsLibPromise) {
     pdfjsLibPromise = import('pdfjs-dist').then((lib) => {
       if (typeof window !== 'undefined') {
-        lib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${lib.version || '4.10.38'}/pdf.worker.min.mjs`;
+        lib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl || `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${lib.version || '4.10.38'}/pdf.worker.min.mjs`;
       }
       return lib;
     });
@@ -30,6 +32,7 @@ const sessionScrollPositions = new Map();
 function PageCanvas({ pdfDoc, pageNumber, width, height }) {
   const canvasRef = useRef(null);
   const [rendered, setRendered] = useState(false);
+  const [renderError, setRenderError] = useState(false);
 
   useEffect(() => {
     let isCancelled = false;
@@ -37,6 +40,7 @@ function PageCanvas({ pdfDoc, pageNumber, width, height }) {
 
     async function renderPage() {
       try {
+        setRenderError(false);
         const page = await pdfDoc.getPage(pageNumber);
         if (isCancelled || !canvasRef.current) return;
 
@@ -68,8 +72,12 @@ function PageCanvas({ pdfDoc, pageNumber, width, height }) {
           setRendered(true);
         }
       } catch (err) {
-        if (err?.name !== 'RenderingCancelledException') {
-          console.warn(`Render cancelled or failed on page ${pageNumber}:`, err);
+        if (err?.name === 'RenderingCancelledException') {
+          return;
+        }
+        console.warn(`Render cancelled or failed on page ${pageNumber}:`, err);
+        if (!isCancelled) {
+          setRenderError(true);
         }
       }
     }
@@ -87,10 +95,15 @@ function PageCanvas({ pdfDoc, pageNumber, width, height }) {
   return (
     <div className="pdf-page-canvas-wrapper" style={{ width: `${width}px`, height: `${height}px` }}>
       <canvas ref={canvasRef} className="pdf-rendered-canvas" />
-      {!rendered && (
+      {!rendered && !renderError && (
         <div className="pdf-page-skeleton-overlay">
           <Loader2 className="animate-spin text-neon-cyan" size={24} />
           <span className="mono">Rendering page {pageNumber}...</span>
+        </div>
+      )}
+      {renderError && (
+        <div className="pdf-page-skeleton-overlay">
+          <span className="mono text-neon-red">Unable to render page {pageNumber}</span>
         </div>
       )}
     </div>
@@ -124,7 +137,10 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     }
   }, []);
 
-  const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 600 });
+  const [containerDimensions, setContainerDimensions] = useState({ 
+    width: typeof window !== 'undefined' ? window.innerWidth : 800, 
+    height: typeof window !== 'undefined' ? window.innerHeight : 600 
+  });
 
   useEffect(() => {
     window.addEventListener('resize', updateContainerDimensions);
@@ -139,7 +155,9 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     setError(null);
     setPdfDoc(null);
     setPagesMeta([]);
-    setVisiblePages(new Set());
+    pageRefs.current.clear();
+    // Pre-populate page 1 and 2 so they begin rendering immediately without waiting for observer
+    setVisiblePages(new Set([1, 2]));
     setCurrentPage(1);
     setZoom(0.80);
 
@@ -150,21 +168,50 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
 
       setPdfDoc(doc);
 
-      // Pre-extract aspect ratio of all pages (very fast, no canvas rendering)
-      const meta = [];
-      for (let i = 1; i <= doc.numPages; i++) {
-        const page = await doc.getPage(i);
-        const vp = page.getViewport({ scale: 1 });
-        meta.push({
-          pageNumber: i,
-          width: vp.width,
-          height: vp.height,
-          aspectRatio: vp.height / vp.width,
-        });
-      }
+      // Fast layout: extract page 1 aspect ratio immediately instead of blocking sequentially for 100 pages!
+      const firstPage = await doc.getPage(1);
+      const firstVp = firstPage.getViewport({ scale: 1 });
+      const defaultAspect = firstVp.height / firstVp.width;
 
-      setPagesMeta(meta);
+      const initialMeta = Array.from({ length: doc.numPages }, (_, idx) => ({
+        pageNumber: idx + 1,
+        width: firstVp.width,
+        height: firstVp.height,
+        aspectRatio: defaultAspect,
+      }));
+
+      setPagesMeta(initialMeta);
+      setVisiblePages(new Set([1, 2]));
       setLoading(false);
+
+      // In the background, refine any pages with different aspect ratios
+      if (doc.numPages > 1) {
+        (async () => {
+          let hasDiff = false;
+          const updated = [...initialMeta];
+          for (let i = 2; i <= doc.numPages; i++) {
+            try {
+              const p = await doc.getPage(i);
+              const vp = p.getViewport({ scale: 1 });
+              const aspect = vp.height / vp.width;
+              if (Math.abs(aspect - defaultAspect) > 0.05) {
+                updated[i - 1] = {
+                  pageNumber: i,
+                  width: vp.width,
+                  height: vp.height,
+                  aspectRatio: aspect,
+                };
+                hasDiff = true;
+              }
+            } catch (e) {
+              // Ignore background errors
+            }
+          }
+          if (hasDiff) {
+            setPagesMeta(updated);
+          }
+        })();
+      }
     } catch (err) {
       console.error('Failed to load PDF document:', err);
       setError('Could not load PDF document. Please check your connection or retry.');
@@ -343,6 +390,13 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
   // Jump to specific page
   const scrollToPage = (pageNum) => {
     const target = Math.max(1, Math.min(pagesMeta.length, pageNum));
+    setVisiblePages((prev) => {
+      const next = new Set(prev);
+      next.add(target);
+      if (target + 1 <= pagesMeta.length) next.add(target + 1);
+      if (target - 1 >= 1) next.add(target - 1);
+      return next;
+    });
     const el = pageRefs.current.get(target);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
