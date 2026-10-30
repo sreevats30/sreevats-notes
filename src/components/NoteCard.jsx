@@ -96,7 +96,7 @@ export function NoteCard({ note, onPreview }) {
 
         <a
           href={downloadUrl}
-          download={note.file.split('/').pop()}
+          download={typeof note.file === 'string' ? note.file.split('/').pop() : 'document.pdf'}
           className="btn-download"
           title="Download watermarked PDF directly"
           target="_blank"

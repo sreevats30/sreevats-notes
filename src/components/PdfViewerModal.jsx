@@ -114,7 +114,7 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pagesMeta, setPagesMeta] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [zoom, setZoom] = useState(0.80); // Default 80% zoom
+  const [zoom, setZoom] = useState(() => (typeof window !== 'undefined' && window.innerWidth <= 640 ? 1.0 : 0.80));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [visiblePages, setVisiblePages] = useState(new Set());
@@ -122,8 +122,19 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
 
   const viewportRef = useRef(null);
   const pageRefs = useRef(new Map());
+  const lastTapRef = useRef(0);
 
-  const pdfUrl = note 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
+  const pdfUrl = (note && typeof note.file === 'string')
     ? (note.file.startsWith('/') || note.file.startsWith('http') ? note.file : `${FILES_BASE_URL}${note.file}`) 
     : '';
 
@@ -159,7 +170,8 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     // Pre-populate page 1 and 2 so they begin rendering immediately without waiting for observer
     setVisiblePages(new Set([1, 2]));
     setCurrentPage(1);
-    setZoom(0.80);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+    setZoom(isMobile ? 1.0 : 0.80);
 
     try {
       const pdfjsLib = await getPdfjsLib();
@@ -246,9 +258,72 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
     }
   }, [loading, pagesMeta, updateContainerDimensions, note?.id]);
 
-  // Standard document reading width (like Adobe / Chrome / Google Drive)
-  const basePageWidth = Math.min(Math.max(260, containerDimensions.width - 32), 740);
+  // Standard document reading width (responsive edge-to-edge on mobile)
+  const isMobile = containerDimensions.width <= 640;
+  const basePageWidth = isMobile
+    ? Math.max(260, containerDimensions.width - 12)
+    : Math.min(Math.max(260, containerDimensions.width - 32), 740);
   const renderedPageWidth = Math.round(basePageWidth * zoom);
+
+  // Touch pinch-to-zoom support for mobile devices
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+
+    let initialDist = 0;
+    let initialZoom = zoom;
+
+    const handleTouchStart = (e) => {
+      if (e.touches.length === 2) {
+        initialDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        initialZoom = zoom;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches.length === 2 && initialDist > 0) {
+        if (e.cancelable) e.preventDefault();
+        const currentDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = currentDist / initialDist;
+        const newZoom = Math.min(2.5, Math.max(0.4, +(initialZoom * factor).toFixed(2)));
+        setZoom(newZoom);
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      if (e.touches.length < 2) {
+        initialDist = 0;
+      }
+    };
+
+    el.addEventListener('touchstart', handleTouchStart, { passive: true });
+    el.addEventListener('touchmove', handleTouchMove, { passive: false });
+    el.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener('touchstart', handleTouchStart);
+      el.removeEventListener('touchmove', handleTouchMove);
+      el.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [zoom]);
+
+  // Double tap to toggle 100% and 135% zoom on mobile
+  const handlePageDoubleTap = useCallback(() => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 320) {
+      const defaultZoom = typeof window !== 'undefined' && window.innerWidth <= 640 ? 1.0 : 0.80;
+      setZoom((z) => (z > defaultZoom + 0.1 ? defaultZoom : defaultZoom + 0.35));
+      lastTapRef.current = 0;
+    } else {
+      lastTapRef.current = now;
+    }
+  }, []);
 
   // Setup IntersectionObserver for continuous virtualization (1-2 screens margin)
   useEffect(() => {
@@ -447,7 +522,7 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
             {/* Download Button */}
             <a
               href={pdfUrl}
-              download={note.file.split('/').pop()}
+              download={typeof note.file === 'string' ? note.file.split('/').pop() : 'document.pdf'}
               className="btn-modal-download"
               target="_blank"
               rel="noopener noreferrer"
@@ -526,11 +601,15 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
             </button>
             <button 
               className="toolbar-btn fit-btn" 
-              onClick={() => setZoom((z) => (z === 0.80 ? 1.0 : 0.80))} 
-              title={zoom === 0.80 ? "Fit Width (100%)" : "Default View (80%)"}
+              onClick={() => {
+                const defaultVal = isMobile ? 1.0 : 0.80;
+                const enlargedVal = isMobile ? 1.35 : 1.0;
+                setZoom((z) => (z === defaultVal ? enlargedVal : defaultVal));
+              }} 
+              title={zoom === (isMobile ? 1.0 : 0.80) ? "Enlarge View" : "Fit Width"}
             >
               <Maximize2 size={15} />
-              <span className="hide-on-mobile">{zoom === 0.80 ? "100%" : "80%"}</span>
+              <span className="hide-on-mobile">{zoom === (isMobile ? 1.0 : 0.80) ? (isMobile ? "135%" : "100%") : (isMobile ? "100%" : "80%")}</span>
             </button>
           </div>
         </div>
@@ -582,6 +661,7 @@ export function PdfViewerModal({ note, isOpen, onClose }) {
                     ref={(el) => pageRefs.current.set(page.pageNumber, el)}
                     data-page-number={page.pageNumber}
                     className="pdf-page-container"
+                    onClick={handlePageDoubleTap}
                     style={{
                       width: `${renderedPageWidth}px`,
                       minHeight: `${pageHeight}px`,

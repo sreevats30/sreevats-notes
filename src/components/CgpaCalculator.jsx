@@ -141,7 +141,8 @@ export function CgpaCalculator() {
           onClick={() => setCalcMode('sgpa')}
         >
           <Award size={16} />
-          <span>Single Semester - SGPA Calculator</span>
+          <span className="calc-btn-full">Single Semester - SGPA Calculator</span>
+          <span className="calc-btn-short">SGPA</span>
         </button>
 
         <button
@@ -149,7 +150,8 @@ export function CgpaCalculator() {
           onClick={() => setCalcMode('cgpa')}
         >
           <TrendingUp size={16} />
-          <span>Semester-wise CGPA Calculator</span>
+          <span className="calc-btn-full">Semester-wise CGPA Calculator</span>
+          <span className="calc-btn-short">CGPA</span>
         </button>
 
         <button
@@ -157,7 +159,8 @@ export function CgpaCalculator() {
           onClick={() => setCalcMode('guide')}
         >
           <BookOpen size={16} />
-          <span>Grading Scale & Formulas</span>
+          <span className="calc-btn-full">Grading Scale & Formulas</span>
+          <span className="calc-btn-short">Guide</span>
         </button>
       </div>
 
@@ -441,7 +444,7 @@ export function CgpaCalculator() {
               <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>
                 3. The Math Formulas
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }} className="mono">
+              <div className="calc-guide-formulas-grid mono">
                 <div style={{ background: 'rgba(0,0,0,0.4)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                   <span style={{ color: 'var(--neon-cyan)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>Semester SGPA:</span>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', margin: 0 }}>

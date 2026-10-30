@@ -101,47 +101,54 @@ export function Navbar({ onOpenSearch, activeTab, setActiveTab }) {
 
         {/* Mobile Drawer */}
         {mobileMenuOpen && (
-          <div className="mobile-drawer">
-            <button 
-              className={`mobile-nav-link ${activeTab === 'notes' ? 'active' : ''}`}
-              onClick={() => handleTabSwitch('notes')}
-            >
-              <BookOpen size={18} />
-              <span>Notes Library</span>
-            </button>
+          <>
+            <div 
+              className="mobile-drawer-backdrop" 
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+            <div className="mobile-drawer">
+              <button 
+                className={`mobile-nav-link ${activeTab === 'notes' ? 'active' : ''}`}
+                onClick={() => handleTabSwitch('notes')}
+              >
+                <BookOpen size={18} />
+                <span>Notes Library</span>
+              </button>
 
-            <button 
-              className={`mobile-nav-link ${activeTab === 'examprep' ? 'active' : ''}`}
-              onClick={() => handleTabSwitch('examprep')}
-            >
-              <GraduationCap size={18} />
-              <span>Exam Prep & PYQs</span>
-            </button>
+              <button 
+                className={`mobile-nav-link ${activeTab === 'examprep' ? 'active' : ''}`}
+                onClick={() => handleTabSwitch('examprep')}
+              >
+                <GraduationCap size={18} />
+                <span>Exam Prep & PYQs</span>
+              </button>
 
-            <button 
-              className={`mobile-nav-link ${activeTab === 'calculator' ? 'active' : ''}`}
-              onClick={() => handleTabSwitch('calculator')}
-            >
-              <Calculator size={18} />
-              <span>CGPA / SGPA Calculator</span>
-            </button>
+              <button 
+                className={`mobile-nav-link ${activeTab === 'calculator' ? 'active' : ''}`}
+                onClick={() => handleTabSwitch('calculator')}
+              >
+                <Calculator size={18} />
+                <span>CGPA / SGPA Calculator</span>
+              </button>
 
-            <button 
-              className={`mobile-nav-link ${activeTab === 'credits' ? 'active' : ''}`}
-              onClick={() => handleTabSwitch('credits')}
-            >
-              <Heart size={18} />
-              <span>Credits & Contributors</span>
-            </button>
+              <button 
+                className={`mobile-nav-link ${activeTab === 'credits' ? 'active' : ''}`}
+                onClick={() => handleTabSwitch('credits')}
+              >
+                <Heart size={18} />
+                <span>Credits & Contributors</span>
+              </button>
 
-            <button 
-              className="mobile-search-btn"
-              onClick={() => { onOpenSearch(); setMobileMenuOpen(false); }}
-            >
-              <Search size={18} />
-              <span>Search All Notes (Ctrl+K)</span>
-            </button>
-          </div>
+              <button 
+                className="mobile-search-btn"
+                onClick={() => { onOpenSearch(); setMobileMenuOpen(false); }}
+              >
+                <Search size={18} />
+                <span>Search All Notes (Ctrl+K)</span>
+              </button>
+            </div>
+          </>
         )}
       </header>
 

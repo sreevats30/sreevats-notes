@@ -5,6 +5,9 @@ export function QrModal({ isOpen, onClose }) {
   useEffect(() => {
     if (!isOpen) return;
 
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     window.history.pushState({ modal: 'qr-modal' }, '');
 
     const handlePopState = () => {
@@ -19,6 +22,7 @@ export function QrModal({ isOpen, onClose }) {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.body.style.overflow = originalOverflow;
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('keydown', handleKeyDown);
       if (window.history.state?.modal === 'qr-modal') {

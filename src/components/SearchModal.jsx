@@ -14,9 +14,12 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
     }
   }, [isOpen]);
 
-  // Handle Escape key & mobile back button
+  // Handle Escape key & mobile back button, plus body scroll lock
   useEffect(() => {
     if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
     window.history.pushState({ modal: 'search-modal' }, '');
 
@@ -34,6 +37,7 @@ export function SearchModal({ isOpen, onClose, notes, onSelectNote }) {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.body.style.overflow = originalOverflow;
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('keydown', handleKeyDown);
       if (window.history.state?.modal === 'search-modal') {

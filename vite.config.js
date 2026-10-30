@@ -19,7 +19,7 @@ function autoPdfMetaPlugin() {
 export default defineConfig({
   plugins: [autoPdfMetaPlugin(), react()],
   server: {
-    host: '0.0.0.0',
+    host: true,
     port: 3000,
     open: false
   },

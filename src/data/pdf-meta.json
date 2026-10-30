@@ -424,6 +424,31 @@
     "sizeMB": 8.26,
     "bytes": 8657727
   },
+  "notes/phy/Phy U2.pdf": {
+    "pages": 11,
+    "sizeMB": 5.53,
+    "bytes": 5800017
+  },
+  "/notes/phy/Phy U2.pdf": {
+    "pages": 11,
+    "sizeMB": 5.53,
+    "bytes": 5800017
+  },
+  "phy/Phy U2.pdf": {
+    "pages": 11,
+    "sizeMB": 5.53,
+    "bytes": 5800017
+  },
+  "/phy/Phy U2.pdf": {
+    "pages": 11,
+    "sizeMB": 5.53,
+    "bytes": 5800017
+  },
+  "Phy U2.pdf": {
+    "pages": 11,
+    "sizeMB": 5.53,
+    "bytes": 5800017
+  },
   "notes/python/Python U1 Programs.pdf": {
     "pages": 7,
     "sizeMB": 0.39,
